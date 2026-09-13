@@ -1,388 +1,254 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
+// Konfigurasi Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCmf_eSwBYbCFCAh_7gwdkDUjFLZhGHF7A",
-  authDomain: "tugas-xpm.firebaseapp.com",
-  projectId: "tugas-xpm",
-  storageBucket: "tugas-xpm.firebasestorage.app",
-  messagingSenderId: "1092797132447",
-  appId: "1:1092797132447:web:066b764fc219dea2223caa",
-  measurementId: "G-NBEB4F1PWW"
+    apiKey: "AIzaSyCnf_e5WBYbCFCAh_7gwdkDU",
+    authDomain: "tugas-xpm.firebaseapp.com",
+    projectId: "tugas-xpm",
+    storageBucket: "tugas-xpm.appspot.com",
+    messagingSenderId: "1092797132447",
+    appId: "1:1092797132447:web:O66b764fc219dea2223caa"
 };
 
+// Inisialisasi Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const messaging = getMessaging(app);
 
-const inputMapel = document.getElementById('inputMapel');
-const inputTugas = document.getElementById('inputTugas');
-const inputGambar = document.getElementById('inputGambar');
-const btnTambah = document.getElementById('btnTambah');
-const containerMapel = document.getElementById('containerMapel');
-const adminSection = document.getElementById('adminSection');
-const btnLoginAdmin = document.getElementById('btnLoginAdmin');
-
-// Elemen Menu Samping & Pengaturan
+// Elemen DOM
 const btnMenu = document.getElementById('btnMenu');
 const sideMenu = document.getElementById('sideMenu');
 const btnCloseMenu = document.getElementById('btnCloseMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const btnDarkMode = document.getElementById('btnDarkMode');
 const btnChangePassword = document.getElementById('btnChangePassword');
+const btnLoginAdmin = document.getElementById('btnLoginAdmin');
+const adminSection = document.getElementById('adminSection');
+const btnTambah = document.getElementById('btnTambah');
+const containerMapel = document.getElementById('containerMapel');
 
-// Elemen Modal Sandi Admin
+// Cek Memori Mode Gelap
+if (localStorage.getItem("theme") === "light") {
+    document.body.classList.remove("dark-theme");
+    btnDarkMode.textContent = "🌙 Mode Gelap";
+} else {
+    document.body.classList.add("dark-theme");
+    btnDarkMode.textContent = "☀️ Mode Terang";
+}
+
+// Toggle Tombol Mode Warna
+btnDarkMode.addEventListener('click', function() {
+    document.body.classList.toggle("dark-theme");
+    
+    if (document.body.classList.contains("dark-theme")) {
+        localStorage.setItem("theme", "dark");
+        btnDarkMode.textContent = "☀️ Mode Terang";
+    } else {
+        localStorage.setItem("theme", "light");
+        btnDarkMode.textContent = "🌙 Mode Gelap";
+    }
+});
+
+// Kontrol Menu Samping (Sidebar)
+btnMenu.addEventListener('click', () => {
+    sideMenu.classList.add('active');
+    menuOverlay.classList.add('active');
+});
+
+function closeMenu() {
+    sideMenu.classList.remove('active');
+    menuOverlay.classList.remove('active');
+}
+
+btnCloseMenu.addEventListener('click', closeMenu);
+menuOverlay.addEventListener('click', closeMenu);
+
+// Manajemen Sandi Admin (Lokal)
+const DEFAULT_PASSWORD = "admin";
+if (!localStorage.getItem("adminPassword")) {
+    localStorage.setItem("adminPassword", DEFAULT_PASSWORD);
+}
+
+let isAdminLoggedIn = false;
+
+// Modal Elemen
 const passwordModal = document.getElementById('passwordModal');
 const inputPassword = document.getElementById('inputPassword');
 const btnSubmitPassword = document.getElementById('btnSubmitPassword');
 const btnCancelPassword = document.getElementById('btnCancelPassword');
 
-// Elemen Modal Ubah Sandi Baru
 const changePasswordModal = document.getElementById('changePasswordModal');
 const inputOldPassword = document.getElementById('inputOldPassword');
 const inputNewPassword = document.getElementById('inputNewPassword');
 const btnSubmitNewPassword = document.getElementById('btnSubmitNewPassword');
 const btnCancelChangePassword = document.getElementById('btnCancelChangePassword');
 
-let isAdmin = false;
-adminSection.style.display = "none";
-
-let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
-
-// Cek memori Mode Gelap
-if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-theme");
-    btnDarkMode.textContent = "☀️ Mode Terang";
-}
-
-// Interaksi Buka/Tutup Menu Samping
-btnMenu.addEventListener('click', () => {
-    sideMenu.classList.add('open');
-    menuOverlay.classList.add('active');
-});
-
-btnCloseMenu.addEventListener('click', () => {
-    sideMenu.classList.remove('open');
-    menuOverlay.classList.remove('active');
-});
-
-menuOverlay.addEventListener('click', () => {
-    sideMenu.classList.remove('open');
-    menuOverlay.classList.remove('active');
-});
-
-// Toggle Mode Gelap
-btnDarkMode.addEventListener('click', function() {
-    document.body.classList.toggle("dark-theme");
-    
-    if (document.body.classList.contains("dark-theme")) {
-        localStorage.setItem("darkMode", "enabled");
-        btnDarkMode.textContent = "☀️ Mode Terang";
+// Tombol Login Admin
+btnLoginAdmin.addEventListener('click', () => {
+    if (!isAdminLoggedIn) {
+        passwordModal.style.display = 'flex';
+        inputPassword.value = '';
     } else {
-        localStorage.setItem("darkMode", "disabled");
-        btnDarkMode.textContent = "🌙 Mode Gelap";
+        isAdminLoggedIn = false;
+        adminSection.style.display = 'none';
+        btnLoginAdmin.textContent = "Masuk Sebagai Admin";
+        alert("Berhasil keluar dari mode admin.");
     }
 });
 
-// Logika Buka Modal Ubah Sandi
-btnChangePassword.addEventListener('click', () => {
-    sideMenu.classList.remove('open');
-    menuOverlay.classList.remove('active');
-    
-    inputOldPassword.value = "";
-    inputNewPassword.value = "";
-    changePasswordModal.classList.add('active');
-    inputOldPassword.focus();
+// Verifikasi Sandi Masuk Admin
+btnSubmitPassword.addEventListener('click', () => {
+    const enteredPassword = inputPassword.value;
+    const savedPassword = localStorage.getItem("adminPassword");
+
+    if (enteredPassword === savedPassword) {
+        isAdminLoggedIn = true;
+        adminSection.style.display = 'block';
+        btnLoginAdmin.textContent = "Keluar Admin";
+        passwordModal.style.display = 'none';
+        
+        // Panggil fungsi izin notifikasi otomatis saat admin berhasil masuk
+        requestNotificationPermission();
+    } else {
+        alert("Sandi salah!");
+    }
 });
 
-// Logika Proses Simpan Sandi Baru
-btnSubmitNewPassword.addEventListener('click', () => {
-    let oldPass = inputOldPassword.value;
-    let newPass = inputNewPassword.value;
+btnCancelPassword.addEventListener('click', () => {
+    passwordModal.style.display = 'none';
+});
 
-    if (oldPass === currentAdminPassword) {
-        if (newPass && newPass.trim() !== "") {
-            currentAdminPassword = newPass.trim();
-            localStorage.setItem("adminPassword", currentAdminPassword);
+// Tombol Buka Menu Ubah Sandi
+btnChangePassword.addEventListener('click', () => {
+    closeMenu();
+    changePasswordModal.style.display = 'flex';
+    inputOldPassword.value = '';
+    inputNewPassword.value = '';
+});
+
+// Aksi Simpan Sandi Baru
+btnSubmitNewPassword.addEventListener('click', () => {
+    const oldPass = inputOldPassword.value;
+    const newPass = inputNewPassword.value;
+    const savedPassword = localStorage.getItem("adminPassword");
+
+    if (oldPass === savedPassword) {
+        if (newPass.trim() !== "") {
+            localStorage.setItem("adminPassword", newPass);
             alert("Sandi admin berhasil diubah!");
-            changePasswordModal.classList.remove('active');
+            changePasswordModal.style.display = 'none';
         } else {
             alert("Sandi baru tidak boleh kosong!");
-            inputNewPassword.focus();
         }
     } else {
-        alert("Sandi lama salah!");
-        inputOldPassword.value = "";
-        inputOldPassword.focus();
+        alert("Sandi saat ini salah!");
     }
 });
 
 btnCancelChangePassword.addEventListener('click', () => {
-    changePasswordModal.classList.remove('active');
+    changePasswordModal.style.display = 'none';
 });
 
-// Logika Admin dengan Modal Custom
-btnLoginAdmin.addEventListener('click', function() {
-    if (!isAdmin) {
-        inputPassword.value = "";
-        passwordModal.classList.add('active');
-        inputPassword.focus();
-    } else {
-        isAdmin = false;
-        adminSection.style.display = "none";
-        btnLoginAdmin.textContent = "Masuk Sebagai Admin";
-        alert("Keluar dari Mode Admin.");
-        muatTugasRealtime();
+// Fungsi Request Izin Notifikasi & Ambil FCM Token (Sudah diisi VAPID Key kamu)
+async function requestNotificationPermission() {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            console.log('Izin notifikasi diberikan.');
+            
+            const token = await getToken(messaging, { 
+                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4' 
+            });
+            
+            if (token) {
+                console.log('FCM Token Perangkat:', token);
+            } else {
+                console.log('Gagal mendapatkan token FCM.');
+            }
+        } else {
+            console.log('Izin notifikasi ditolak.');
+        }
+    } catch (error) {
+        console.error('Terjadi kesalahan saat meminta izin notifikasi:', error);
     }
+}
+
+// Menangkap Pesan Saat Aplikasi Terbuka (Foreground)
+onMessage(messaging, (payload) => {
+    console.log('Pesan diterima saat aplikasi terbuka: ', payload);
+    alert(`Notifikasi Baru: ${payload.notification.title} - ${payload.notification.body}`);
 });
 
-btnSubmitPassword.addEventListener('click', function() {
-    let sandi = inputPassword.value;
-    if (sandi === currentAdminPassword) {
-        isAdmin = true;
-        adminSection.style.display = "block";
-        btnLoginAdmin.textContent = "Keluar Mode Admin";
-        passwordModal.classList.remove('active');
-        alert("Mode Admin Aktif!");
-        muatTugasRealtime();
-    } else {
-        alert("Sandi salah!");
-        inputPassword.value = "";
-        inputPassword.focus();
-    }
-});
+// Fitur Tambah Tugas ke Firestore
+btnTambah.addEventListener('click', async () => {
+    const mapel = document.getElementById('inputMapel').value.trim();
+    const tugas = document.getElementById('inputTugas').value.trim();
+    const gambar = document.getElementById('inputGambar').value.trim();
 
-btnCancelPassword.addEventListener('click', function() {
-    passwordModal.classList.remove('active');
-});
-
-btnTambah.addEventListener('click', async function() {
-    const mapel = inputMapel.value.trim();
-    const teks = inputTugas.value.trim();
-    const gambar = inputGambar.value.trim();
-
-    if (mapel === "" || teks === "") {
-        alert("Nama Mapel dan Keterangan Tugas wajib diisi!");
+    if (!mapel || !tugas) {
+        alert("Nama mata pelajaran dan keterangan tugas harus diisi!");
         return;
     }
 
     try {
-        await addDoc(collection(db, "tugasKelas"), {
+        await addDoc(collection(db, "tugas"), {
             mapel: mapel,
-            teks: teks,
+            tugas: tugas,
             gambar: gambar,
-            waktu: Date.now()
+            timestamp: new Date()
         });
-        inputMapel.value = "";
-        inputTugas.value = "";
-        inputGambar.value = "";
-        alert("Tugas berhasil ditambahkan!");
+
+        document.getElementById('inputMapel').value = '';
+        document.getElementById('inputTugas').value = '';
+        document.getElementById('inputGambar').value = '';
+        alert("Tugas berhasil diposting!");
     } catch (error) {
-        console.error("Gagal menambah tugas: ", error);
-        alert("Terjadi kesalahan saat menyimpan.");
+        console.error("Gagal menambahkan tugas: ", error);
+        alert("Terjadi kesalahan saat menyimpan tugas.");
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Header Mapel Slim & Menu Dropdown Keren
-function muatTugasRealtime() {
-    onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
-        containerMapel.innerHTML = "";
+// Render Real-Time Daftar Tugas dari Firestore
+onSnapshot(collection(db, "tugas"), (snapshot) => {
+    containerMapel.innerHTML = "";
+    
+    if (snapshot.empty) {
+        containerMapel.innerHTML = `<p style="text-align: center; color: #888;">Belum ada tugas.</p>`;
+        return;
+    }
 
-        if (snapshot.empty) {
-            containerMapel.innerHTML = "<p style='text-align:center; color:#888;'>Belum ada tugas sama sekali.</p>";
-            return;
-        }
+    snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const docId = docSnap.id;
 
-        let dataMapel = {};
-        snapshot.forEach((docItem) => {
-            let data = docItem.data();
-            let id = docItem.id;
-            let namaMapel = data.mapel;
+        const card = document.createElement('div');
+        card.className = 'mapel-card';
+        
+        let gambarHTML = data.gambar ? `<img src="${data.gambar}" alt="Gambar Tugas" style="width:100%; border-radius:8px; margin-top:10px;">` : '';
+        let tombolHapusHTML = isAdminLoggedIn ? `<button onclick="window.hapusTugas('${docId}')" style="background:#ff4444; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; margin-top:10px;">Hapus Tugas</button>` : '';
 
-            if (!dataMapel[namaMapel]) {
-                dataMapel[namaMapel] = [];
-            }
-            dataMapel[namaMapel].push({ id: id, ...data });
-        });
-
-        for (let mapel in dataMapel) {
-            const card = document.createElement('div');
-            card.classList.add('mapel-card');
-
-            const header = document.createElement('div');
-            header.classList.add('mapel-header');
-            header.style.display = "flex";
-            header.style.alignItems = "center";
-            header.style.justifyContent = "space-between";
-            header.style.position = "relative";
-            header.style.padding = "5px 12px"; 
-            header.style.minHeight = "auto";
-            header.style.lineHeight = "1.2";
-
-            const spacer = document.createElement('div');
-            spacer.style.width = "24px";
-            header.appendChild(spacer);
-
-            const titleSpan = document.createElement('span');
-            titleSpan.textContent = mapel;
-            titleSpan.style.flexGrow = "1";
-            titleSpan.style.textAlign = "center";
-            titleSpan.style.fontWeight = "bold";
-            titleSpan.style.fontSize = "15px";
-            titleSpan.style.margin = "0";
-            titleSpan.style.overflow = "hidden";
-            titleSpan.style.textOverflow = "ellipsis";
-            titleSpan.style.whiteSpace = "nowrap";
-            header.appendChild(titleSpan);
-
-            const btnMapelOptions = document.createElement('button');
-            btnMapelOptions.textContent = "⋮";
-            btnMapelOptions.style.background = "transparent";
-            btnMapelOptions.style.color = "white";
-            btnMapelOptions.style.border = "none";
-            btnMapelOptions.style.fontSize = "18px";
-            btnMapelOptions.style.fontWeight = "bold";
-            btnMapelOptions.style.cursor = "pointer";
-            btnMapelOptions.style.width = "24px";
-            btnMapelOptions.style.height = "24px";
-            btnMapelOptions.style.lineHeight = "1";
-            btnMapelOptions.style.padding = "0";
-            header.appendChild(btnMapelOptions);
-
-            const mapelMenuDropdown = document.createElement('div');
-            mapelMenuDropdown.style.display = "none";
-            mapelMenuDropdown.style.position = "absolute";
-            mapelMenuDropdown.style.top = "36px";
-            mapelMenuDropdown.style.right = "10px";
-            mapelMenuDropdown.style.background = "#2d2d2d";
-            mapelMenuDropdown.style.color = "#ffffff";
-            mapelMenuDropdown.style.boxShadow = "0 6px 16px rgba(0,0,0,0.6)";
-            mapelMenuDropdown.style.borderRadius = "8px";
-            mapelMenuDropdown.style.zIndex = "10";
-            mapelMenuDropdown.style.overflow = "hidden";
-            mapelMenuDropdown.style.minWidth = "170px";
-            mapelMenuDropdown.style.border = "1px solid #444";
-
-            let tugasUtama = dataMapel[mapel][0]; 
-            let adaGambar = tugasUtama.gambar && tugasUtama.gambar.trim() !== "";
-
-            const optionCopy = document.createElement('div');
-            optionCopy.textContent = "📋 Salin Text";
-            optionCopy.style.padding = "10px 14px";
-            optionCopy.style.cursor = "pointer";
-            optionCopy.style.fontSize = "14px";
-            optionCopy.style.borderBottom = adaGambar ? "1px solid #444" : "none";
-            optionCopy.addEventListener('click', () => {
-                navigator.clipboard.writeText(tugasUtama.teks).then(() => {
-                    alert("Teks berhasil disalin!");
-                }).catch(err => {
-                    console.error("Gagal menyalin teks: ", err);
-                });
-                mapelMenuDropdown.style.display = "none";
-            });
-            mapelMenuDropdown.appendChild(optionCopy);
-
-            if (adaGambar) {
-                const optionFull = document.createElement('div');
-                optionFull.textContent = "🔍 Full Screen";
-                optionFull.style.padding = "10px 14px";
-                optionFull.style.cursor = "pointer";
-                optionFull.style.fontSize = "14px";
-                optionFull.style.borderBottom = "1px solid #444";
-                optionFull.addEventListener('click', () => {
-                    const targetImg = card.querySelector('.tugas-gambar');
-                    if (targetImg) {
-                        if (targetImg.requestFullscreen) {
-                            targetImg.requestFullscreen();
-                        } else if (targetImg.webkitRequestFullscreen) {
-                            targetImg.webkitRequestFullscreen();
-                        }
-                    }
-                    mapelMenuDropdown.style.display = "none";
-                });
-                mapelMenuDropdown.appendChild(optionFull);
-
-                const optionDownload = document.createElement('a');
-                optionDownload.textContent = "📥 Download Image";
-                optionDownload.href = tugasUtama.gambar;
-                optionDownload.target = "_blank";
-                optionDownload.download = "Tugas-XPM.jpg";
-                optionDownload.style.display = "block";
-                optionDownload.style.padding = "10px 14px";
-                optionDownload.style.color = "#ffffff";
-                optionDownload.style.textDecoration = "none";
-                optionDownload.style.fontSize = "14px";
-                optionDownload.addEventListener('click', () => {
-                    mapelMenuDropdown.style.display = "none";
-                });
-                mapelMenuDropdown.appendChild(optionDownload);
-            }
-
-            mapelMenuDropdown.classList.add('mapel-menu-dropdown-popup');
-            header.appendChild(mapelMenuDropdown);
-
-            btnMapelOptions.addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.querySelectorAll('.mapel-menu-dropdown-popup').forEach(m => {
-                    if (m !== mapelMenuDropdown) m.style.display = "none";
-                });
-
-                if (mapelMenuDropdown.style.display === "block") {
-                    mapelMenuDropdown.style.display = "none";
-                } else {
-                    mapelMenuDropdown.style.display = "block";
-                }
-            });
-
-            card.appendChild(header);
-
-            const body = document.createElement('div');
-            body.classList.add('mapel-body');
-
-            dataMapel[mapel].forEach((tugas) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.classList.add('tugas-item');
-
-                const teksP = document.createElement('div');
-                teksP.classList.add('tugas-teks');
-                teksP.textContent = tugas.teks;
-                itemDiv.appendChild(teksP);
-
-                if (tugas.gambar && tugas.gambar.trim() !== "") {
-                    const img = document.createElement('img');
-                    img.src = tugas.gambar;
-                    img.classList.add('tugas-gambar');
-                    img.style.width = "100%";
-                    img.style.borderRadius = "6px";
-                    img.style.marginTop = "10px";
-                    img.style.display = "block";
-                    itemDiv.appendChild(img);
-                }
-
-                if (isAdmin) {
-                    const btnHapus = document.createElement('button');
-                    btnHapus.textContent = 'Hapus Tugas Ini';
-                    btnHapus.classList.add('hapus');
-                    btnHapus.addEventListener('click', async function() {
-                        if (confirm("Yakin ingin menghapus tugas ini?")) {
-                            await deleteDoc(doc(db, "tugasKelas", tugas.id));
-                        }
-                    });
-                    itemDiv.appendChild(btnHapus);
-                }
-
-                body.appendChild(itemDiv);
-            });
-
-            card.appendChild(body);
-            containerMapel.appendChild(card);
-        }
-    });
-}
-
-document.addEventListener('click', () => {
-    document.querySelectorAll('.mapel-menu-dropdown-popup').forEach(m => {
-        m.style.display = "none";
+        card.innerHTML = `
+            <div class="mapel-header"><h3>${data.mapel}</h3></div>
+            <div class="mapel-body">
+                <p>${data.tugas}</p>
+                ${gambarHTML}
+                ${tombolHapusHTML}
+            </div>
+        `;
+        containerMapel.appendChild(card);
     });
 });
 
-muatTugasRealtime();
+// Fungsi Global untuk Hapus Tugas (Khusus Admin)
+window.hapusTugas = async function(id) {
+    if (confirm("Yakin ingin menghapus tugas ini?")) {
+        try {
+            await deleteDoc(doc(db, "tugas", id));
+            alert("Tugas berhasil dihapus.");
+        } catch (error) {
+            console.error("Gagal menghapus: ", error);
+        }
+    }
+};
