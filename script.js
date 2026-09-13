@@ -160,32 +160,31 @@ btnCancelPassword.addEventListener('click', function() {
     passwordModal.classList.remove('active');
 });
 
-// Fungsi Meminta Izin Notifikasi & Mengambil Token dengan Fallback Aman
+// Fungsi Meminta Izin Notifikasi & Mengambil Token
 async function requestNotificationPermission() {
     try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
+            console.log('Izin notifikasi diberikan.');
+            
             const token = await getToken(messaging, { 
                 vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4'
-            }).catch((err) => {
-                console.warn("Gagal mengambil token otomatis:", err);
+            }).catch(err => {
+                console.error("Gagal getToken:", err);
                 return null;
             });
             
             if (token) {
-                alert("TOKEN BERHASIL DIDAPATKAN:\n\n" + token);
+                prompt("TOKEN FCM BERHASIL DIDAPATKAN! Salin teks di bawah ini:", token);
             } else {
-                let manualToken = prompt("Browser HP membatasi Service Worker. Jika Anda memiliki token dari Firebase Console, masukkan di sini:");
-                if(manualToken) {
-                    alert("Token manual berhasil dicatat!");
-                }
+                alert("Token gagal dibuat. Kemungkinan besar browser HP kamu (Chrome Mobile di GitHub Pages) memblokir Service Worker FCM tanpa domain HTTPS utama.");
             }
         } else {
             alert("Izin notifikasi ditolak oleh browser.");
         }
     } catch (error) {
         console.error("Error:", error);
-        alert("Gagal memuat token: " + error.message);
+        alert("Error Messaging: " + error.message);
     }
 }
 
