@@ -135,7 +135,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Menu Titik Tiga Gambar
+// Fungsi Pemuatan Tugas Realtime + Menu Titik Tiga (Teks & Gambar)
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -172,62 +172,125 @@ function muatTugasRealtime() {
             dataMapel[mapel].forEach((tugas) => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('tugas-item');
+                itemDiv.style.position = "relative";
 
+                // Tombol Titik Tiga (⋮) Teks di Pojok Kanan Atas
+                const btnTextOptions = document.createElement('button');
+                btnTextOptions.textContent = "⋮";
+                btnTextOptions.style.position = "absolute";
+                btnTextOptions.style.top = "10px";
+                btnTextOptions.style.right = "10px";
+                btnTextOptions.style.background = "transparent";
+                btnTextOptions.style.color = "#888";
+                btnTextOptions.style.border = "none";
+                btnTextOptions.style.fontSize = "18px";
+                btnTextOptions.style.fontWeight = "bold";
+                btnTextOptions.style.cursor = "pointer";
+                btnTextOptions.style.zIndex = "5";
+                itemDiv.appendChild(btnTextOptions);
+
+                // Menu Pop-up Salin Text
+                const textMenuDropdown = document.createElement('div');
+                textMenuDropdown.style.display = "none";
+                textMenuDropdown.style.position = "absolute";
+                textMenuDropdown.style.top = "36px";
+                textMenuDropdown.style.right = "10px";
+                textMenuDropdown.style.background = "#ffffff";
+                textMenuDropdown.style.color = "#333333";
+                textMenuDropdown.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+                textMenuDropdown.style.borderRadius = "8px";
+                textMenuDropdown.style.zIndex = "10";
+                textMenuDropdown.style.overflow = "hidden";
+                textMenuDropdown.style.minWidth = "120px";
+
+                const optionCopy = document.createElement('div');
+                optionCopy.textContent = "📋 Salin Text";
+                optionCopy.style.padding = "10px 14px";
+                optionCopy.style.cursor = "pointer";
+                optionCopy.style.fontSize = "14px";
+                optionCopy.addEventListener('click', () => {
+                    navigator.clipboard.writeText(tugas.teks).then(() => {
+                        alert("Teks berhasil disalin!");
+                    }).catch(err => {
+                        console.error("Gagal menyalin teks: ", err);
+                    });
+                    textMenuDropdown.style.display = "none";
+                });
+                textMenuDropdown.appendChild(optionCopy);
+                textMenuDropdown.classList.add('text-menu-dropdown-popup');
+                itemDiv.appendChild(textMenuDropdown);
+
+                btnTextOptions.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.text-menu-dropdown-popup, .menu-dropdown-popup').forEach(m => {
+                        if (m !== textMenuDropdown) m.style.display = "none";
+                    });
+
+                    if (textMenuDropdown.style.display === "block") {
+                        textMenuDropdown.style.display = "none";
+                    } else {
+                        textMenuDropdown.style.display = "block";
+                    }
+                });
+
+                // Teks Tugas
                 const teksP = document.createElement('div');
                 teksP.classList.add('tugas-teks');
                 teksP.textContent = tugas.teks;
+                teksP.style.paddingRight = "25px";
                 itemDiv.appendChild(teksP);
 
                 if (tugas.gambar && tugas.gambar.trim() !== "") {
-                    // Container pembungkus gambar agar tombol titik tiga bisa melayang di pojok kanan atas
                     const imageWrapper = document.createElement('div');
                     imageWrapper.style.position = "relative";
                     imageWrapper.style.marginTop = "10px";
+                    imageWrapper.style.display = "inline-block";
+                    imageWrapper.style.width = "100%";
 
                     const img = document.createElement('img');
                     img.src = tugas.gambar;
                     img.classList.add('tugas-gambar');
                     img.style.width = "100%";
                     img.style.borderRadius = "6px";
+                    img.style.display = "block";
                     imageWrapper.appendChild(img);
 
-                    // Tombol Titik Tiga (⋮) di Pojok Kanan Atas
                     const btnOptions = document.createElement('button');
                     btnOptions.textContent = "⋮";
                     btnOptions.style.position = "absolute";
-                    btnOptions.style.top = "8px";
-                    btnOptions.style.right = "8px";
-                    btnOptions.style.background = "rgba(0, 0, 0, 0.6)";
+                    btnOptions.style.top = "12px";
+                    btnOptions.style.right = "12px";
+                    btnOptions.style.background = "rgba(0, 0, 0, 0.75)";
                     btnOptions.style.color = "white";
                     btnOptions.style.border = "none";
                     btnOptions.style.borderRadius = "50%";
-                    btnOptions.style.width = "32px";
-                    btnOptions.style.height = "32px";
-                    btnOptions.style.fontSize = "18px";
+                    btnOptions.style.width = "36px";
+                    btnOptions.style.height = "36px";
+                    btnOptions.style.fontSize = "20px";
+                    btnOptions.style.fontWeight = "bold";
                     btnOptions.style.cursor = "pointer";
                     btnOptions.style.zIndex = "5";
                     imageWrapper.appendChild(btnOptions);
 
-                    // Menu Pop-up (Fullscreen & Download)
                     const menuDropdown = document.createElement('div');
                     menuDropdown.style.display = "none";
                     menuDropdown.style.position = "absolute";
-                    menuDropdown.style.top = "45px";
-                    menuDropdown.style.right = "8px";
-                    menuDropdown.style.background = "#fff";
-                    menuDropdown.style.color = "#333";
-                    menuDropdown.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
-                    menuDropdown.style.borderRadius = "6px";
+                    menuDropdown.style.top = "52px";
+                    menuDropdown.style.right = "12px";
+                    menuDropdown.style.background = "#ffffff";
+                    menuDropdown.style.color = "#333333";
+                    menuDropdown.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+                    menuDropdown.style.borderRadius = "8px";
                     menuDropdown.style.zIndex = "10";
                     menuDropdown.style.overflow = "hidden";
+                    menuDropdown.style.minWidth = "150px";
 
-                    // Opsi 1: Full Screen
                     const optionFull = document.createElement('div');
                     optionFull.textContent = "🔍 Full Screen";
-                    optionFull.style.padding = "10px 14px";
+                    optionFull.style.padding = "12px 16px";
                     optionFull.style.cursor = "pointer";
                     optionFull.style.fontSize = "14px";
-                    optionFull.style.borderBottom = "1px solid #eee";
+                    optionFull.style.borderBottom = "1px solid #f0f0f0";
                     optionFull.addEventListener('click', () => {
                         if (img.requestFullscreen) {
                             img.requestFullscreen();
@@ -238,15 +301,14 @@ function muatTugasRealtime() {
                     });
                     menuDropdown.appendChild(optionFull);
 
-                    // Opsi 2: Download Image
                     const optionDownload = document.createElement('a');
                     optionDownload.textContent = "📥 Download Image";
                     optionDownload.href = tugas.gambar;
                     optionDownload.target = "_blank";
                     optionDownload.download = "Tugas-XPM.jpg";
                     optionDownload.style.display = "block";
-                    optionDownload.style.padding = "10px 14px";
-                    optionDownload.style.color = "#333";
+                    optionDownload.style.padding = "12px 16px";
+                    optionDownload.style.color = "#333333";
                     optionDownload.style.textDecoration = "none";
                     optionDownload.style.fontSize = "14px";
                     optionDownload.addEventListener('click', () => {
@@ -256,9 +318,12 @@ function muatTugasRealtime() {
 
                     imageWrapper.appendChild(menuDropdown);
 
-                    // Event Klik Tombol Titik Tiga untuk Buka/Tutup Menu
                     btnOptions.addEventListener('click', (e) => {
                         e.stopPropagation();
+                        document.querySelectorAll('.text-menu-dropdown-popup, .menu-dropdown-popup').forEach(m => {
+                            if (m !== menuDropdown) m.style.display = "none";
+                        });
+
                         if (menuDropdown.style.display === "block") {
                             menuDropdown.style.display = "none";
                         } else {
@@ -266,11 +331,7 @@ function muatTugasRealtime() {
                         }
                     });
 
-                    // Tutup menu jika klik di luar gambar
-                    document.addEventListener('click', () => {
-                        menuDropdown.style.display = "none";
-                    });
-
+                    menuDropdown.classList.add('menu-dropdown-popup');
                     itemDiv.appendChild(imageWrapper);
                 }
 
@@ -294,5 +355,12 @@ function muatTugasRealtime() {
         }
     });
 }
+
+// Tutup semua menu dropdown jika area luar diklik
+document.addEventListener('click', () => {
+    document.querySelectorAll('.text-menu-dropdown-popup, .menu-dropdown-popup').forEach(m => {
+        m.style.display = "none";
+    });
+});
 
 muatTugasRealtime();
