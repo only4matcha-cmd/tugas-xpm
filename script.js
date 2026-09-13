@@ -22,10 +22,50 @@ const containerMapel = document.getElementById('containerMapel');
 const adminSection = document.getElementById('adminSection');
 const btnLoginAdmin = document.getElementById('btnLoginAdmin');
 
-let isAdmin = false;
+// Elemen Menu Samping & Mode Gelap
+const btnMenu = document.getElementById('btnMenu');
+const sideMenu = document.getElementById('sideMenu');
+const btnCloseMenu = document.getElementById('btnCloseMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+const btnDarkMode = document.getElementById('btnDarkMode');
 
-// Pastikan panel admin tertutup saat pertama kali web dibuka
+let isAdmin = false;
 adminSection.style.display = "none";
+
+// Cek memori untuk mode gelap
+if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-theme");
+    btnDarkMode.textContent = "☀️ Mode Terang";
+}
+
+// Interaksi Buka/Tutup Menu Samping
+btnMenu.addEventListener('click', () => {
+    sideMenu.classList.add('open');
+    menuOverlay.classList.add('active');
+});
+
+btnCloseMenu.addEventListener('click', () => {
+    sideMenu.classList.remove('open');
+    menuOverlay.classList.remove('active');
+});
+
+menuOverlay.addEventListener('click', () => {
+    sideMenu.classList.remove('open');
+    menuOverlay.classList.remove('active');
+});
+
+// Toggle Mode Gelap
+btnDarkMode.addEventListener('click', function() {
+    document.body.classList.toggle("dark-theme");
+    
+    if (document.body.classList.contains("dark-theme")) {
+        localStorage.setItem("darkMode", "enabled");
+        btnDarkMode.textContent = "☀️ Mode Terang";
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+        btnDarkMode.textContent = "🌙 Mode Gelap";
+    }
+});
 
 btnLoginAdmin.addEventListener('click', function() {
     if (!isAdmin) {
