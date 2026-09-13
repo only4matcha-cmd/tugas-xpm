@@ -55,7 +55,7 @@ let isAdmin = false;
 adminSection.style.display = "none";
 
 let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
-const NOMOR_ADMIN_WA = "6281234567890"; // <-- Ganti dengan nomor WhatsApp-mu
+const NOMOR_ADMIN_WA = "6287745656583"; // <-- Ganti dengan nomor WhatsApp-mu
 
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-theme");
