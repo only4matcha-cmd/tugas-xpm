@@ -31,6 +31,22 @@ const btnDarkMode = document.getElementById('btnDarkMode');
 const btnChangePassword = document.getElementById('btnChangePassword');
 const btnVerifyWa = document.getElementById('btnVerifyWa');
 
+// Elemen Navigasi Tab Sidebar
+const menuMainCategories = document.getElementById('menuMainCategories');
+const sidebarTitle = document.getElementById('sidebarTitle');
+
+const tabGeneral = document.getElementById('tabGeneral');
+const contentGeneral = document.getElementById('contentGeneral');
+const btnBackFromGeneral = document.getElementById('btnBackFromGeneral');
+
+const tabNotifikasi = document.getElementById('tabNotifikasi');
+const contentNotifikasi = document.getElementById('contentNotifikasi');
+const btnBackFromNotifikasi = document.getElementById('btnBackFromNotifikasi');
+
+const tabKeamanan = document.getElementById('tabKeamanan');
+const contentKeamanan = document.getElementById('contentKeamanan');
+const btnBackFromKeamanan = document.getElementById('btnBackFromKeamanan');
+
 const passwordModal = document.getElementById('passwordModal');
 const inputPassword = document.getElementById('inputPassword');
 const btnSubmitPassword = document.getElementById('btnSubmitPassword');
@@ -55,15 +71,25 @@ let isAdmin = false;
 adminSection.style.display = "none";
 
 let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
-const NOMOR_ADMIN_WA = "6287745656583"; // <-- Ganti dengan nomor WhatsApp aslimu
+const NOMOR_ADMIN_WA = "6281234567890"; // <-- Ganti dengan nomor WhatsApp aslimu
 
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-theme");
     btnDarkMode.textContent = "☀️ Mode Terang";
 }
 
-// Navigasi Sidebar
+// Fungsi Reset Tampilan Sidebar ke Menu Utama
+function resetSidebarMenu() {
+    menuMainCategories.style.display = "flex";
+    contentGeneral.style.display = "none";
+    contentNotifikasi.style.display = "none";
+    contentKeamanan.style.display = "none";
+    sidebarTitle.textContent = "⚙️ Menu Pengaturan";
+}
+
+// Navigasi Sidebar Utama
 btnMenu.addEventListener('click', () => {
+    resetSidebarMenu();
     sideMenu.classList.add('open');
     menuOverlay.classList.add('active');
 });
@@ -71,12 +97,36 @@ btnMenu.addEventListener('click', () => {
 btnCloseMenu.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
+    resetSidebarMenu();
 });
 
 menuOverlay.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
+    resetSidebarMenu();
 });
+
+// Interaksi Tab Sidebar Kategori
+tabGeneral.addEventListener('click', () => {
+    menuMainCategories.style.display = "none";
+    contentGeneral.style.display = "flex";
+    sidebarTitle.textContent = "📁 General";
+});
+btnBackFromGeneral.addEventListener('click', resetSidebarMenu);
+
+tabNotifikasi.addEventListener('click', () => {
+    menuMainCategories.style.display = "none";
+    contentNotifikasi.style.display = "flex";
+    sidebarTitle.textContent = "🔔 Notifikasi";
+});
+btnBackFromNotifikasi.addEventListener('click', resetSidebarMenu);
+
+tabKeamanan.addEventListener('click', () => {
+    menuMainCategories.style.display = "none";
+    contentKeamanan.style.display = "flex";
+    sidebarTitle.textContent = "🔒 Keamanan";
+});
+btnBackFromKeamanan.addEventListener('click', resetSidebarMenu);
 
 // Dark Mode
 btnDarkMode.addEventListener('click', function() {
@@ -94,6 +144,7 @@ btnDarkMode.addEventListener('click', function() {
 btnVerifyWa.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
+    resetSidebarMenu();
     verifyModal.classList.add('active');
     inputSiswaWa.value = "";
     inputSiswaWa.focus();
@@ -128,7 +179,7 @@ btnLoginAdmin.addEventListener('click', function() {
         adminSection.style.display = "none";
         btnLoginAdmin.textContent = "Masuk Sebagai Admin";
         alert("Keluar dari Mode Admin.");
-        muatTugasRealtime(); // Refresh tampilan agar tombol hapus tugas hilang
+        muatTugasRealtime();
     }
 });
 
@@ -140,7 +191,8 @@ btnSubmitPassword.addEventListener('click', function() {
         btnLoginAdmin.textContent = "Keluar Mode Admin";
         passwordModal.classList.remove('active');
         alert("Mode Admin Aktif!");
-        muatTugasRealtime(); // Refresh agar tombol hapus tugas muncul
+        muatWhitelistWa();
+        muatTugasRealtime();
     } else {
         alert("Sandi salah!");
         inputPassword.value = "";
@@ -156,6 +208,7 @@ btnCancelPassword.addEventListener('click', function() {
 btnChangePassword.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
+    resetSidebarMenu();
     inputOldPassword.value = "";
     inputNewPassword.value = "";
     changePasswordModal.classList.add('active');
