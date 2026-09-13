@@ -183,7 +183,7 @@ function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
         
-        // Deteksi penambahan tugas baru untuk memunculkan notifikasi
+        // Deteksi penambahan tugas baru untuk memunculkan notifikasi (Aman dari pemuatan awal)
         if (!isFirstLoad && localStorage.getItem("notifStatus") === "enabled") {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added") {
