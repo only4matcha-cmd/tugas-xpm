@@ -6,22 +6,40 @@
     <title>Tugas Kelas X-PM</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
     <!-- Tombol Menu Samping (Garis Tiga) -->
     <button id="btnMenu" class="btn-menu">☰</button>
 
-    <!-- Menu Samping (Sidebar) -->
+    <!-- Menu Samping (Sidebar) dengan Kategori -->
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
             <span>⚙️ Menu Pengaturan</span>
             <button id="btnCloseMenu" class="btn-close">×</button>
         </div>
-        <div class="side-menu-body">
-            <button id="btnDarkMode" class="menu-btn">🌙 Mode Gelap</button>
-            <button id="btnVerifyWa" class="menu-btn">📱 Ingatkan Via WA</button>
-            <button id="btnChangePassword" class="menu-btn">🔑 Ubah Sandi Admin</button>
+        <div class="side-menu-body" style="padding: 15px; display: flex; flex-direction: column; gap: 15px;">
+            
+            <!-- Kategori 1: General -->
+            <div>
+                <div style="font-size: 12px; color: #888; font-weight: bold; margin-bottom: 6px; text-transform: uppercase;">General</div>
+                <button id="btnDarkMode" class="menu-btn" style="width: 100%; margin-bottom: 0;">🌙 Mode Gelap</button>
+            </div>
+
+            <!-- Kategori 2: Keamanan -->
+            <div>
+                <div style="font-size: 12px; color: #888; font-weight: bold; margin-bottom: 6px; text-transform: uppercase;">Keamanan</div>
+                <button id="btnChangePassword" class="menu-btn" style="width: 100%; margin-bottom: 0;">🔑 Ubah Sandi Admin</button>
+            </div>
+
+            <!-- Kategori 3: Notifikasi -->
+            <div>
+                <div style="font-size: 12px; color: #888; font-weight: bold; margin-bottom: 6px; text-transform: uppercase;">Notifikasi</div>
+                <button id="btnVerifyWa" class="menu-btn" style="width: 100%; margin-bottom: 0;">📱 Verifikasi Nomor WA</button>
+            </div>
+
         </div>
     </div>
     <div id="menuOverlay" class="menu-overlay"></div>
@@ -50,7 +68,7 @@
                 <input type="text" id="inputWhitelistWa" placeholder="Nomor WA (Contoh: 628123456789)">
                 <button id="btnSimpanWa" class="btn-submit" style="background-color: #2e7d32; margin-top: 5px;">Simpan Nomor ke Daftar</button>
                 
-                <!-- Kontainer list nomor yang otomatis diisi script.js -->
+                <!-- Kontainer list nomor terverifikasi -->
                 <div id="listNomorWa" style="margin-top: 10px; font-size: 13px; color: #ccc;">Belum ada nomor.</div>
             </div>
         </div>
