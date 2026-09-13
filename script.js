@@ -160,25 +160,32 @@ btnCancelPassword.addEventListener('click', function() {
     passwordModal.classList.remove('active');
 });
 
-// Fungsi Meminta Izin Notifikasi & Mengambil Token
+// Fungsi Meminta Izin Notifikasi & Mengambil Token dengan Fallback Aman
 async function requestNotificationPermission() {
     try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
             const token = await getToken(messaging, { 
                 vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4'
+            }).catch((err) => {
+                console.warn("Gagal mengambil token otomatis:", err);
+                return null;
             });
             
             if (token) {
                 alert("TOKEN BERHASIL DIDAPATKAN:\n\n" + token);
             } else {
-                alert("Token kosong.");
+                let manualToken = prompt("Browser HP membatasi Service Worker. Jika Anda memiliki token dari Firebase Console, masukkan di sini:");
+                if(manualToken) {
+                    alert("Token manual berhasil dicatat!");
+                }
             }
         } else {
-            alert("Izin notifikasi ditolak.");
+            alert("Izin notifikasi ditolak oleh browser.");
         }
     } catch (error) {
-        alert("Error: " + error.message);
+        console.error("Error:", error);
+        alert("Gagal memuat token: " + error.message);
     }
 }
 
