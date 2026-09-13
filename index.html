@@ -3,68 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tugas X-PM</title>
+    <title>Tugas Kelas X-PM</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-    <!-- Tombol Menu Kiri Atas -->
+    <!-- Tombol Menu Samping (Garis Tiga) -->
     <button id="btnMenu" class="btn-menu">☰</button>
 
-    <!-- Overlay & Side Menu -->
-    <div id="menuOverlay" class="menu-overlay"></div>
+    <!-- Menu Samping (Sidebar) -->
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
-            <h3>Menu Utama</h3>
-            <button id="btnCloseMenu" class="btn-close">✕</button>
+            <span>⚙️ Menu Pengaturan</span>
+            <button id="btnCloseMenu" class="btn-close">×</button>
         </div>
         <div class="side-menu-body">
-            <button id="btnDarkMode" class="menu-item">🌙 Mode Gelap</button>
-            <button id="btnWaReminder" class="menu-item">📱 Ingatkan Saya via WA</button>
-            <button id="btnChangePassword" class="menu-item">🔑 Ubah Sandi Admin</button>
-            <button id="btnLoginAdmin" class="menu-item admin-btn">Masuk Sebagai Admin</button>
+            <button id="btnDarkMode" class="menu-btn">🌙 Mode Gelap</button>
+            <button id="btnWaReminder" class="menu-btn">📱 Ingatkan Saya via WA</button>
+            <button id="btnChangePassword" class="menu-btn">🔑 Ubah Sandi Admin</button>
         </div>
     </div>
+    <div id="menuOverlay" class="menu-overlay"></div>
 
     <!-- Konten Utama -->
     <div class="container">
-        <h1>Tugas Kelas X-PM</h1>
+        <h1>📚 Tugas Kelas X-PM</h1>
 
-        <!-- Panel Admin (Tersembunyi Awalnya) -->
+        <!-- Tombol Masuk Admin -->
+        <button id="btnLoginAdmin" class="btn-login">Masuk Sebagai Admin</button>
+
+        <!-- Form Tambah Tugas (Khusus Admin) -->
         <div id="adminSection" class="admin-panel" style="display: none;">
-            <h3>Panel Admin</h3>
-            <input type="text" id="inputMapel" placeholder="Nama Mata Pelajaran">
-            <textarea id="inputTugas" placeholder="Keterangan Tugas"></textarea>
+            <h3>Tambah Tugas Baru</h3>
+            <input type="text" id="inputMapel" placeholder="Nama Mata Pelajaran (Contoh: IPAS)">
+            <textarea id="inputTugas" placeholder="Keterangan / Soal Tugas..."></textarea>
             <input type="text" id="inputGambar" placeholder="Link Gambar (Opsional)">
-            <button id="btnTambah">Posting Tugas</button>
+            <button id="btnTambah" class="btn-submit">Posting Tugas</button>
         </div>
 
-        <!-- Daftar Tugas -->
-        <div id="containerMapel"></div>
+        <!-- Daftar Tugas Render Realtime -->
+        <div id="containerMapel">
+            <p style="text-align: center; color: #888;">Memuat tugas...</p>
+        </div>
     </div>
 
-    <!-- Modal Password Admin -->
+    <!-- Modal Sandi Admin -->
     <div id="passwordModal" class="modal">
         <div class="modal-content">
             <h3>Masukkan Sandi Admin</h3>
-            <input type="password" id="inputPassword" placeholder="Sandi...">
+            <input type="password" id="inputPassword" placeholder="Sandi..." class="modal-input">
             <div class="modal-buttons">
-                <button id="btnSubmitPassword">Masuk</button>
-                <button id="btnCancelPassword">Batal</button>
+                <button id="btnSubmitPassword" class="btn-modal-ok">Masuk</button>
+                <button id="btnCancelPassword" class="btn-modal-cancel">Batal</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Ubah Sandi -->
+    <!-- Modal Ubah Sandi Admin Kustom -->
     <div id="changePasswordModal" class="modal">
         <div class="modal-content">
             <h3>Ubah Sandi Admin</h3>
-            <input type="password" id="inputOldPassword" placeholder="Sandi Lama">
-            <input type="password" id="inputNewPassword" placeholder="Sandi Baru">
-            <div class="modal-buttons">
-                <button id="btnSubmitNewPassword">Simpan</button>
-                <button id="btnCancelChangePassword">Batal</button>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Masukkan sandi lama dan sandi baru:</p>
+            <input type="password" id="inputOldPassword" placeholder="Sandi Saat Ini" class="modal-input">
+            <input type="password" id="inputNewPassword" placeholder="Sandi Baru" class="modal-input" style="margin-top: 8px;">
+            <div class="modal-buttons" style="margin-top: 15px;">
+                <button id="btnSubmitNewPassword" class="btn-modal-ok">Simpan</button>
+                <button id="btnCancelChangePassword" class="btn-modal-cancel">Batal</button>
             </div>
         </div>
     </div>
@@ -73,15 +78,16 @@
     <div id="waModal" class="modal">
         <div class="modal-content">
             <h3>Atur Pengingat WhatsApp</h3>
-            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Masukkan nomor WA kamu (format: 628xxxxxxxxxx) agar tombol kirim tugas otomatis mengarah ke nomor ini.</p>
-            <input type="text" id="inputWaNumber" placeholder="Contoh: 6281234567890">
-            <div class="modal-buttons">
-                <button id="btnSubmitWa">Simpan</button>
-                <button id="btnCancelWa">Batal</button>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Masukkan nomor WA kamu (format: 628xxxxxxxxxx):</p>
+            <input type="text" id="inputWaNumber" placeholder="Contoh: 6281234567890" class="modal-input">
+            <div class="modal-buttons" style="margin-top: 15px;">
+                <button id="btnSubmitWa" class="btn-modal-ok">Simpan</button>
+                <button id="btnCancelWa" class="btn-modal-cancel">Batal</button>
             </div>
         </div>
     </div>
 
+    <!-- Script Utama -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
