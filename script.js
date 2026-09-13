@@ -1,8 +1,6 @@
-// Import Firebase SDK versi modular
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Konfigurasi Firebase milikmu
 const firebaseConfig = {
   apiKey: "AIzaSyCmf_eSwBYbCFCAh_7gwdkDUjFLZhGHF7A",
   authDomain: "tugas-xpm.firebaseapp.com",
@@ -13,21 +11,19 @@ const firebaseConfig = {
   measurementId: "G-NBEB4F1PWW"
 };
 
-// Inisialisasi Firebase & Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const inputMapel = document.getElementById('inputMapel');
 const inputTugas = document.getElementById('inputTugas');
+const inputGambar = document.getElementById('inputGambar');
 const btnTambah = document.getElementById('btnTambah');
-const listTugas = document.getElementById('listTugas');
-const loadingText = document.getElementById('loadingText');
+const containerMapel = document.getElementById('containerMapel');
 const adminSection = document.getElementById('adminSection');
 const btnLoginAdmin = document.getElementById('btnLoginAdmin');
 
-// Status Admin (Default: False / Hanya bisa lihat)
 let isAdmin = false;
 
-// Tombol rahasia untuk membuka menu input tugas (pakai sandi sederhana "xpm123")
 btnLoginAdmin.addEventListener('click', function() {
     if (!isAdmin) {
         let sandi = prompt("Masukkan sandi admin:");
@@ -35,8 +31,8 @@ btnLoginAdmin.addEventListener('click', function() {
             isAdmin = true;
             adminSection.style.display = "flex";
             btnLoginAdmin.textContent = "Keluar Mode Admin";
-            alert("Mode Admin Aktif! Kamu bisa menambah dan menghapus tugas.");
-            muatTugasRealtime(); // Muat ulang agar tombol hapus muncul khusus untuk admin
+            alert("Mode Admin Aktif!");
+            muatTugasRealtime();
         } else if (sandi !== null) {
             alert("Sandi salah!");
         }
@@ -49,66 +45,102 @@ btnLoginAdmin.addEventListener('click', function() {
     }
 });
 
-// Fungsi Menambahkan Tugas ke Firestore (Database Online)
 btnTambah.addEventListener('click', async function() {
-    const teksTugas = inputTugas.value.trim();
-    if (teksTugas === "") {
-        alert("Tolong isi nama tugas!");
+    const mapel = inputMapel.value.trim();
+    const teks = inputTugas.value.trim();
+    const gambar = inputGambar.value.trim();
+
+    if (mapel === "" || teks === "") {
+        alert("Nama Mapel dan Keterangan Tugas wajib diisi!");
         return;
     }
 
     try {
         await addDoc(collection(db, "tugasKelas"), {
-            teks: teksTugas,
+            mapel: mapel,
+            teks: teks,
+            gambar: gambar,
             waktu: Date.now()
         });
+        inputMapel.value = "";
         inputTugas.value = "";
+        inputGambar.value = "";
+        alert("Tugas berhasil ditambahkan!");
     } catch (error) {
         console.error("Gagal menambah tugas: ", error);
-        alert("Terjadi kesalahan saat menyimpan ke database.");
+        alert("Terjadi kesalahan saat menyimpan.");
     }
 });
 
-// Fungsi Mengambil & Menampilkan Tugas Secara Real-Time dari Firebase
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
-        listTugas.innerHTML = ""; // Bersihkan list di layar
+        containerMapel.innerHTML = "";
         
         if (snapshot.empty) {
-            listTugas.innerHTML = "<p style='text-align:center; color:#888;'>Belum ada tugas.</p>";
+            containerMapel.innerHTML = "<p style='text-align:center; color:#888;'>Belum ada tugas sama sekali.</p>";
             return;
         }
 
+        let dataMapel = {};
         snapshot.forEach((docItem) => {
-            const data = docItem.data();
-            const idTugas = docItem.id;
+            let data = docItem.data();
+            let id = docItem.id;
+            let namaMapel = data.mapel;
 
-            const li = document.createElement('li');
-            
-            const span = document.createElement('span');
-            span.textContent = data.teks;
-            li.appendChild(span);
-
-            // Jika sedang login sebagai Admin, tampilkan tombol Hapus
-            if (isAdmin) {
-                const btnHapus = document.createElement('button');
-                btnHapus.textContent = 'Hapus';
-                btnHapus.classList.add('hapus');
-                
-                btnHapus.addEventListener('click', async function() {
-                    if (confirm("Yakin ingin menghapus tugas ini?")) {
-                        await deleteDoc(doc(db, "tugasKelas", idTugas));
-                    }
-                });
-                
-                li.appendChild(btnHapus);
+            if (!dataMapel[namaMapel]) {
+                dataMapel[namaMapel] = [];
             }
-
-            listTugas.appendChild(li);
+            dataMapel[namaMapel].push({ id: id, ...data });
         });
+
+        for (let mapel in dataMapel) {
+            const card = document.createElement('div');
+            card.classList.add('mapel-card');
+
+            const header = document.createElement('div');
+            header.classList.add('mapel-header');
+            header.textContent = mapel;
+            card.appendChild(header);
+
+            const body = document.createElement('div');
+            body.classList.add('mapel-body');
+
+            dataMapel[mapel].forEach((tugas) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('tugas-item');
+
+                const teksP = document.createElement('div');
+                teksP.classList.add('tugas-teks');
+                teksP.textContent = tugas.teks;
+                itemDiv.appendChild(teksP);
+
+                if (tugas.gambar && tugas.gambar.trim() !== "") {
+                    const img = document.createElement('img');
+                    img.src = tugas.gambar;
+                    img.classList.add('tugas-gambar');
+                    itemDiv.appendChild(img);
+                }
+
+                if (isAdmin) {
+                    const btnHapus = document.createElement('button');
+                    btnHapus.textContent = 'Hapus Tugas Ini';
+                    btnHapus.classList.add('hapus');
+                    btnHapus.addEventListener('click', async function() {
+                        if (confirm("Yakin ingin menghapus tugas ini?")) {
+                            await deleteDoc(doc(db, "tugasKelas", tugas.id));
+                        }
+                    });
+                    itemDiv.appendChild(btnHapus);
+                }
+
+                body.appendChild(itemDiv);
+            });
+
+            card.appendChild(body);
+            containerMapel.appendChild(card);
+        }
     });
 }
 
-// Jalankan fungsi ambil data saat web dibuka
 muatTugasRealtime();
 
