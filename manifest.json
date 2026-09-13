@@ -4,7 +4,7 @@
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
+  "theme_color": "",
   "icons": [
     {
       "src": "https://raw.githubusercontent.com/only4matcha-cmd/tugas-xpm/refs/heads/main/depositphotos_123252166-stock-illustration-book-with-pencil-icon.jpg",
