@@ -1,282 +1,190 @@
-:root {
-    --bg-color: #f4f6f9;
-    --container-bg: #ffffff;
-    --text-color: #333333;
-    --card-bg: #f9f9f9;
-    --card-border: #e0e0e0;
-    --input-bg: #ffffff;
-    --input-border: #ccc;
-    --input-text: #333333;
-    --section-bg: #f1f3f5;
-}
-
-body.dark-theme {
-    --bg-color: #121212;
-    --container-bg: #1e1e1e;
-    --text-color: #e0e0e0;
-    --card-bg: #2a2a2a;
-    --card-border: #333333;
-    --input-bg: #2d2d2d;
-    --input-border: #444;
-    --input-text: #ffffff;
-    --section-bg: #252525;
-}
-
+/* Styling Umum */
 body {
     font-family: Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: #121212;
+    color: #e0e0e0;
     margin: 0;
-    padding: 15px;
-    display: flex;
-    justify-content: center;
-    transition: background-color 0.3s ease;
+    padding: 20px;
+    transition: background 0.3s, color 0.3s;
 }
 
-/* Tombol Garis Tiga (Hamburger Menu) */
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Tombol Menu Garis Tiga */
 .btn-menu {
     position: fixed;
     top: 15px;
     left: 15px;
-    background-color: var(--text-color);
-    color: var(--container-bg);
-    border: none;
-    font-size: 18px;
-    width: 38px;
-    height: 38px;
+    background: #2d2d2d;
+    color: white;
+    border: 1px solid #444;
+    font-size: 20px;
+    padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 100;
 }
 
-/* Menu Samping (Sidebar) */
+/* Sidebar Menu Samping */
 .side-menu {
-    position: fixed !important;
-    top: 0 !important;
-    left: -280px !important;
-    width: 250px !important;
-    height: 100% !important;
-    background-color: var(--container-bg) !important;
-    color: var(--text-color) !important;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.2);
-    z-index: 1100 !important;
-    padding: 20px;
-    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100%;
+    background-color: #1e1e1e;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.5);
     transition: left 0.3s ease;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
 }
 
 .side-menu.open {
-    left: 0 !important;
+    left: 0;
 }
 
-.side-menu h3 {
-    margin-top: 25px;
-    font-size: 16px;
-    border-bottom: 1px solid var(--card-border);
-    padding-bottom: 10px;
-    color: var(--text-color);
+.side-menu-header {
+    padding: 20px;
+    background-color: #252525;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
 }
 
 .btn-close {
-    background: none !important;
+    background: none;
     border: none;
-    font-size: 26px;
-    color: var(--text-color);
+    color: white;
+    font-size: 24px;
     cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    width: auto !important;
 }
 
-.menu-item-btn {
-    background-color: var(--text-color) !important;
-    color: var(--container-bg) !important;
-    border: 1px solid var(--card-border);
-    padding: 10px;
+.side-menu-body {
+    padding: 20px;
+}
+
+/* Tombol Menu Samping Seragam & Di Tengah */
+.menu-btn {
     width: 100%;
-    text-align: left;
-    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #2d2d2d;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 15px;
+    display: block;
+    transition: background 0.2s;
 }
 
-/* Background Gelap Transparan untuk Menu Samping */
+.menu-btn:hover {
+    background-color: #3d3d3d;
+}
+
+/* Overlay Hitam Belakang Sidebar */
 .menu-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 1050;
-    display: none;
+    background: rgba(0,0,0,0.5);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000;
 }
 
 .menu-overlay.active {
-    display: block;
+    visibility: visible;
+    opacity: 1;
 }
 
-/* Background & Posisi Kotak Sandi Admin Custom di Tengah Layar */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+/* Tombol Aksi Utama */
+.btn-login {
     width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    z-index: 2000;
-    display: none;
-    justify-content: center;
-    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-weight: bold;
 }
 
-.modal-overlay.active {
-    display: flex;
+/* Panel Admin */
+.admin-panel {
+    background-color: #1e1e1e;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
 }
 
-.modal-box {
-    background-color: var(--container-bg);
-    color: var(--text-color);
-    padding: 20px;
-    border-radius: 12px;
-    width: 85%;
-    max-width: 320px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+.admin-panel input, .admin-panel textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 6px;
     box-sizing: border-box;
-    border: 1px solid var(--card-border);
-}
-
-.modal-box h3 {
-    margin-top: 0;
-    font-size: 16px;
-    color: var(--text-color);
-}
-
-.modal-box p {
-    font-size: 13px;
-    color: #888;
-    margin-bottom: 15px;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.btn-cancel {
-    background-color: #6c757d !important;
 }
 
 .btn-submit {
-    background-color: #4CAF50 !important;
-}
-
-.container {
-    background: var(--container-bg);
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     width: 100%;
-    max-width: 450px;
-    box-sizing: border-box;
-    transition: background 0.3s ease;
-    margin-top: 35px;
-}
-
-h1 {
-    text-align: center;
-    color: var(--text-color);
-    font-size: 20px;
-    margin-top: 5px;
-}
-
-.input-section {
-    margin-bottom: 15px;
-    background: var(--section-bg);
-    padding: 12px;
-    border-radius: 8px;
-    box-sizing: border-box;
-}
-
-.input-section h3 {
-    margin: 0 0 8px 0;
-    font-size: 14px;
-    color: var(--text-color);
-}
-
-input, textarea {
-    width: 100%;
-    display: block;
     padding: 10px;
-    margin-bottom: 10px;
-    background-color: var(--input-bg);
-    color: var(--input-text);
-    border: 1px solid var(--input-border);
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: inherit;
-    box-sizing: border-box;
-}
-
-textarea {
-    resize: vertical;
-    height: 70px;
-}
-
-button {
-    width: 100%;
-    padding: 10px 15px;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
-    box-sizing: border-box;
+    font-weight: bold;
 }
 
-.btn-admin {
-    width: 100%;
-    background-color: #6c757d;
-    margin-bottom: 15px;
-    font-size: 12px;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
+/* Kartu Mapel & Tugas */
 .mapel-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
+    background-color: #1e1e1e;
     border-radius: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
     overflow: hidden;
+    border: 1px solid #333;
 }
 
 .mapel-header {
-    background: #4CAF50;
+    background-color: #4CAF50;
     color: white;
-    padding: 8px 12px;
+    padding: 5px 12px !important;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     font-weight: bold;
-    font-size: 15px;
-    text-align: center;
 }
 
 .mapel-body {
-    padding: 12px;
+    padding: 15px;
 }
 
 .tugas-item {
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed var(--card-border);
+    margin-bottom: 15px;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 15px;
 }
 
 .tugas-item:last-child {
@@ -286,24 +194,166 @@ button {
 }
 
 .tugas-teks {
+    white-space: pre-wrap;
+    word-break: break-word;
     font-size: 14px;
-    color: var(--text-color);
-    white-space: pre-line;
-    margin-bottom: 6px;
+    line-height: 1.4;
 }
 
 .tugas-gambar {
-    max-width: 100%;
+    width: 100%;
     border-radius: 6px;
-    margin-top: 6px;
-    border: 1px solid var(--card-border);
+    margin-top: 10px;
     display: block;
 }
 
+/* Tombol Hapus Admin */
 .hapus {
-    background-color: #ff5252;
-    padding: 6px 10px;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
     font-size: 12px;
-    margin-top: 8px;
-    width: auto;
+    margin-top: 10px;
+    display: block;
+}
+
+/* Modal Kustom */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s, visibility 0.2s;
+    z-index: 2000;
+}
+
+.modal.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-content {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 300px;
+    border: 1px solid #444;
+    text-align: center;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 10px;
+    background: #333;
+    border: 1px solid #555;
+    color: white;
+    border-radius: 6px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.btn-modal-ok, .btn-modal-cancel {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-modal-ok {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-modal-cancel {
+    background-color: #555;
+    color: white;
+}
+
+/* Mode Terang (Light Theme) */
+body.dark-theme {
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+body.dark-theme .side-menu {
+    background-color: #ffffff;
+    color: #333;
+}
+
+body.dark-theme .side-menu-header {
+    background-color: #eaeaea;
+    border-bottom: 1px solid #ddd;
+}
+
+body.dark-theme .btn-close {
+    color: #333;
+}
+
+body.dark-theme .menu-btn {
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+body.dark-theme .menu-btn:hover {
+    background-color: #d0d0d0;
+}
+
+body.dark-theme .btn-login {
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+body.dark-theme .admin-panel {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+}
+
+body.dark-theme .admin-panel input, 
+body.dark-theme .admin-panel textarea {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #333;
+}
+
+body.dark-theme .mapel-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+}
+
+body.dark-theme .modal-content {
+    background: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+body.dark-theme .modal-input {
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #333;
+}
+
+body.dark-theme .btn-modal-cancel {
+    background-color: #ccc;
+    color: #333;
 }
