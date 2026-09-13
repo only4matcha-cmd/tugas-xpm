@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papan Tugas Kelas</title>
+    <title>Papan Tugas Kelas X-PM</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,22 +11,24 @@
     <div class="container">
         <h1>📚 Tugas Kelas X-PM</h1>
         
-        <!-- Bagian Input (Disembunyikan otomatis, nanti muncul kalau pakai kode sandi) -->
+        <!-- Bagian Input Admin -->
         <div id="adminSection" class="input-section" style="display: none;">
-            <input type="text" id="inputTugas" placeholder="Tulis tugas baru...">
-            <button id="btnTambah">Tambah</button>
+            <h3>Panel Admin Tambah Tugas</h3>
+            <input type="text" id="inputMapel" placeholder="Nama Mapel (Cth: Matematika)">
+            <textarea id="inputTugas" placeholder="Keterangan tugas atau soal..."></textarea>
+            <input type="text" id="inputGambar" placeholder="Link Gambar Soal (Opsional, Boleh dikosongkan)">
+            <button id="btnTambah">Simpan Tugas</button>
         </div>
 
-        <!-- Tombol Login Admin Rahasia -->
+        <!-- Tombol Login Admin -->
         <button id="btnLoginAdmin" class="btn-admin">Masuk Sebagai Admin</button>
 
-        <!-- Daftar Tugas Online -->
-        <ul id="listTugas">
-            <p id="loadingText">Memuat tugas dari server...</p>
-        </ul>
+        <!-- Daftar Mapel Dinamis -->
+        <div id="containerMapel">
+            <p id="loadingText" style="text-align:center; color:#888;">Memuat daftar tugas...</p>
+        </div>
     </div>
 
     <script type="module" src="script.js"></script>
 </body>
 </html>
-
