@@ -14,6 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Elemen DOM
 const inputMapel = document.getElementById('inputMapel');
 const inputTugas = document.getElementById('inputTugas');
 const inputGambar = document.getElementById('inputGambar');
@@ -54,15 +55,14 @@ let isAdmin = false;
 adminSection.style.display = "none";
 
 let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
-
-// Nomor Admin tempat siswa mengirim verifikasi (Ganti dengan nomor WhatsApp-mu sendiri)
-const NOMOR_ADMIN_WA = "6281234567890"; 
+const NOMOR_ADMIN_WA = "6281234567890"; // <-- Ganti dengan nomor WhatsApp-mu
 
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-theme");
     btnDarkMode.textContent = "☀️ Mode Terang";
 }
 
+// Navigasi Sidebar
 btnMenu.addEventListener('click', () => {
     sideMenu.classList.add('open');
     menuOverlay.classList.add('active');
@@ -78,6 +78,7 @@ menuOverlay.addEventListener('click', () => {
     menuOverlay.classList.remove('active');
 });
 
+// Dark Mode
 btnDarkMode.addEventListener('click', function() {
     document.body.classList.toggle("dark-theme");
     if (document.body.classList.contains("dark-theme")) {
@@ -89,7 +90,7 @@ btnDarkMode.addEventListener('click', function() {
     }
 });
 
-// Fitur Verifikasi Siswa (Membuka WA ke Admin dengan Kode Unik)
+// Modal Verifikasi Siswa
 btnVerifyWa.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
@@ -116,40 +117,41 @@ btnCancelVerify.addEventListener('click', () => {
     verifyModal.classList.remove('active');
 });
 
-// Admin Menambah Nomor ke Database Whitelist
-btnSimpanWa.addEventListener('click', async () => {
-    let nomorBaru = inputWhitelistWa.value.trim();
-    if (nomorBaru !== "") {
-        try {
-            await addDoc(collection(db, "whitelistWa"), { nomor: nomorBaru });
-            inputWhitelistWa.value = "";
-            alert("Nomor berhasil ditambahkan ke daftar terverifikasi!");
-        } catch (error) {
-            console.error("Gagal menyimpan nomor:", error);
-            alert("Terjadi kesalahan.");
-        }
+// Login Admin
+btnLoginAdmin.addEventListener('click', function() {
+    if (!isAdmin) {
+        inputPassword.value = "";
+        passwordModal.classList.add('active');
+        inputPassword.focus();
     } else {
-        alert("Nomor tidak boleh kosong!");
+        isAdmin = false;
+        adminSection.style.display = "none";
+        btnLoginAdmin.textContent = "Masuk Sebagai Admin";
+        alert("Keluar dari Mode Admin.");
     }
 });
 
-// Muat daftar nomor terverifikasi di panel admin secara realtime
-function muatWhitelistWa() {
-    onSnapshot(collection(db, "whitelistWa"), (snapshot) => {
-        listNomorWa.innerHTML = "";
-        if (snapshot.empty) {
-            listNomorWa.textContent = "Belum ada nomor terverifikasi.";
-            return;
-        }
-        let html = "<b>Tersimpan:</b> ";
-        let listArr = [];
-        snapshot.forEach((docItem) => {
-            listArr.push(docItem.data().nomor);
-        });
-        listNomorWa.textContent = listArr.join(", ");
-    });
-}
+btnSubmitPassword.addEventListener('click', function() {
+    let sandi = inputPassword.value;
+    if (sandi === currentAdminPassword) {
+        isAdmin = true;
+        adminSection.style.display = "block";
+        btnLoginAdmin.textContent = "Keluar Mode Admin";
+        passwordModal.classList.remove('active');
+        alert("Mode Admin Aktif!");
+        muatWhitelistWa();
+    } else {
+        alert("Sandi salah!");
+        inputPassword.value = "";
+        inputPassword.focus();
+    }
+});
 
+btnCancelPassword.addEventListener('click', function() {
+    passwordModal.classList.remove('active');
+});
+
+// Ubah Sandi Admin
 btnChangePassword.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
@@ -184,42 +186,39 @@ btnCancelChangePassword.addEventListener('click', () => {
     changePasswordModal.classList.remove('active');
 });
 
-btnLoginAdmin.addEventListener('click', function() {
-    if (!isAdmin) {
-        inputPassword.value = "";
-        passwordModal.classList.add('active');
-        inputPassword.focus();
+// Admin Menambah Nomor Whitelist ke Firestore
+btnSimpanWa.addEventListener('click', async () => {
+    let nomorBaru = inputWhitelistWa.value.trim();
+    if (nomorBaru !== "") {
+        try {
+            await addDoc(collection(db, "whitelistWa"), { nomor: nomorBaru });
+            inputWhitelistWa.value = "";
+            alert("Nomor berhasil disimpan ke daftar terverifikasi!");
+        } catch (error) {
+            console.error("Gagal menyimpan nomor:", error);
+            alert("Terjadi kesalahan saat menyimpan.");
+        }
     } else {
-        isAdmin = false;
-        adminSection.style.display = "none";
-        btnLoginAdmin.textContent = "Masuk Sebagai Admin";
-        alert("Keluar dari Mode Admin.");
-        muatTugasRealtime();
+        alert("Nomor tidak boleh kosong!");
     }
 });
 
-btnSubmitPassword.addEventListener('click', function() {
-    let sandi = inputPassword.value;
-    if (sandi === currentAdminPassword) {
-        isAdmin = true;
-        adminSection.style.display = "block";
-        btnLoginAdmin.textContent = "Keluar Mode Admin";
-        passwordModal.classList.remove('active');
-        alert("Mode Admin Aktif!");
-        muatTugasRealtime();
-        muatWhitelistWa();
-    } else {
-        alert("Sandi salah!");
-        inputPassword.value = "";
-        inputPassword.focus();
-    }
-});
+// Muat daftar nomor terverifikasi di Panel Admin
+function muatWhitelistWa() {
+    onSnapshot(collection(db, "whitelistWa"), (snapshot) => {
+        if (snapshot.empty) {
+            listNomorWa.textContent = "Belum ada nomor terverifikasi.";
+            return;
+        }
+        let listArr = [];
+        snapshot.forEach((docItem) => {
+            listArr.push(docItem.data().nomor);
+        });
+        listNomorWa.textContent = "Tersimpan: " + listArr.join(", ");
+    });
+}
 
-btnCancelPassword.addEventListener('click', function() {
-    passwordModal.classList.remove('active');
-});
-
-// Posting tugas dan opsi kirim WA otomatis ke nomor-nomor terverifikasi
+// Tambah Tugas oleh Admin
 btnTambah.addEventListener('click', async function() {
     const mapel = inputMapel.value.trim();
     const teks = inputTugas.value.trim();
@@ -243,12 +242,9 @@ btnTambah.addEventListener('click', async function() {
         inputGambar.value = "";
         alert("Tugas berhasil ditambahkan!");
 
-        // Ambil daftar nomor terverifikasi dari Firestore untuk dikirimi pesan
-        // (Catatan: Menggunakan wa.me satu per satu atau via broadcast link)
-        let kirimWa = confirm("Tugas berhasil diposting! Ingin mengirim pengingat ke nomor WhatsApp terverifikasi?");
+        let kirimWa = confirm("Tugas berhasil diposting! Ingin mengirim pengingat ke WhatsApp?");
         if (kirimWa) {
             let pesan = `📢 *TUGAS BARU - ${mapel.toUpperCase()}*\n\n${teks}\n\nCek web kelas: ${window.location.href}`;
-            // Membuka wa.me umum (bisa dikirim ke grup kelas atau broadcast list)
             let urlWa = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
             window.open(urlWa, '_blank');
         }
@@ -259,6 +255,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
+// Render Daftar Tugas Realtime
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -455,10 +452,12 @@ function muatTugasRealtime() {
     });
 }
 
+// Tutup dropdown jika klik di luar
 document.addEventListener('click', () => {
     document.querySelectorAll('.mapel-menu-dropdown-popup').forEach(m => {
         m.style.display = "none";
     });
 });
 
+// Jalankan fungsi muat tugas saat halaman dibuka
 muatTugasRealtime();
