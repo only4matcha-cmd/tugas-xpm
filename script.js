@@ -83,7 +83,7 @@ btnDarkMode.addEventListener('click', function() {
     }
 });
 
-// Fitur WhatsApp Reminder
+// Fitur WhatsApp Reminder (Menu Kiri Atas)
 btnWaReminder.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
@@ -102,6 +102,7 @@ btnSubmitWa.addEventListener('click', () => {
         waModal.classList.remove('active');
     } else {
         alert("Nomor tidak boleh kosong!");
+        inputWaNumber.focus();
     }
 });
 
@@ -201,7 +202,6 @@ btnTambah.addEventListener('click', async function() {
         inputGambar.value = "";
         alert("Tugas berhasil ditambahkan!");
 
-        // Otomatis tawarkan kirim WA jika nomor tersimpan di perangkat admin
         let savedWa = localStorage.getItem("studentWaNumber");
         if (savedWa) {
             let kirimWa = confirm("Tugas berhasil diposting! Ingin mengirim pengingat ke WhatsApp?");
