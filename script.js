@@ -29,7 +29,7 @@ btnLoginAdmin.addEventListener('click', function() {
         let sandi = prompt("Masukkan sandi admin:");
         if (sandi === "xpm123") {
             isAdmin = true;
-            adminSection.style.display = "flex";
+            adminSection.style.display = "block";
             btnLoginAdmin.textContent = "Keluar Mode Admin";
             alert("Mode Admin Aktif!");
             muatTugasRealtime();
@@ -143,4 +143,3 @@ function muatTugasRealtime() {
 }
 
 muatTugasRealtime();
-
