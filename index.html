@@ -20,7 +20,7 @@
         </div>
         <div class="side-menu-body">
             <button id="btnDarkMode" class="menu-btn">🌙 Mode Gelap</button>
-            <button id="btnWaReminder" class="menu-btn">📱 Ingatkan Saya via WA</button>
+            <button id="btnVerifyWa" class="menu-btn">📱 Verifikasi Nomor WA</button>
             <button id="btnChangePassword" class="menu-btn">🔑 Ubah Sandi Admin</button>
         </div>
     </div>
@@ -33,13 +33,24 @@
         <!-- Tombol Masuk Admin -->
         <button id="btnLoginAdmin" class="btn-login">Masuk Sebagai Admin</button>
 
-        <!-- Form Tambah Tugas (Khusus Admin) -->
+        <!-- Form Tambah Tugas & Kelola Nomor (Khusus Admin) -->
         <div id="adminSection" class="admin-panel" style="display: none;">
-            <h3>Tambah Tugas Baru</h3>
-            <input type="text" id="inputMapel" placeholder="Nama Mata Pelajaran (Contoh: IPAS)">
-            <textarea id="inputTugas" placeholder="Keterangan / Soal Tugas..."></textarea>
-            <input type="text" id="inputGambar" placeholder="Link Gambar (Opsional)">
-            <button id="btnTambah" class="btn-submit">Posting Tugas</button>
+            <h3>Panel Admin</h3>
+            
+            <div style="margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 15px;">
+                <h4 style="margin-bottom: 8px;">Tambah Tugas Baru</h4>
+                <input type="text" id="inputMapel" placeholder="Nama Mata Pelajaran (Contoh: IPAS)">
+                <textarea id="inputTugas" placeholder="Keterangan / Soal Tugas..."></textarea>
+                <input type="text" id="inputGambar" placeholder="Link Gambar (Opsional)">
+                <button id="btnTambah" class="btn-submit">Posting Tugas</button>
+            </div>
+
+            <div>
+                <h4 style="margin-bottom: 8px;">Daftar Nomor Terverifikasi (Whitelist WA)</h4>
+                <input type="text" id="inputWhitelistWa" placeholder="Nomor WA (Contoh: 628123456789)">
+                <button id="btnSimpanWa" class="btn-submit" style="background-color: #2e7d32; margin-top: 5px;">Simpan Nomor ke Daftar</button>
+                <div id="listNomorWa" style="margin-top: 10px; font-size: 13px; color: #ccc;"></div>
+            </div>
         </div>
 
         <!-- Daftar Tugas Render Realtime -->
@@ -74,15 +85,15 @@
         </div>
     </div>
 
-    <!-- Modal Input Nomor WhatsApp -->
-    <div id="waModal" class="modal">
+    <!-- Modal Verifikasi Siswa -->
+    <div id="verifyModal" class="modal">
         <div class="modal-content">
-            <h3>Atur Pengingat WhatsApp</h3>
-            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Masukkan nomor WA kamu (format: 628xxxxxxxxxx):</p>
-            <input type="text" id="inputWaNumber" placeholder="Contoh: 6281234567890" class="modal-input">
+            <h3>Verifikasi Nomor WhatsApp</h3>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Masukkan nomor WA kamu. Sistem akan mengirim kode verifikasi otomatis via chat ke Admin.</p>
+            <input type="text" id="inputSiswaWa" placeholder="Contoh: 628123456789" class="modal-input">
             <div class="modal-buttons" style="margin-top: 15px;">
-                <button id="btnSubmitWa" class="btn-modal-ok">Simpan</button>
-                <button id="btnCancelWa" class="btn-modal-cancel">Batal</button>
+                <button id="btnKirimVerifikasi" class="btn-modal-ok">Kirim ke WA Admin</button>
+                <button id="btnCancelVerify" class="btn-modal-cancel">Batal</button>
             </div>
         </div>
     </div>
