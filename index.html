@@ -3,59 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papan Tugas Kelas X-PM</title>
+    <title>Tugas Kelas X-PM</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4CAF50">
 </head>
 <body>
 
-    <!-- Tombol Menu Garis Tiga (Sidebar) -->
+    <!-- Tombol Menu Samping (Garis Tiga) -->
     <button id="btnMenu" class="btn-menu">☰</button>
 
-    <!-- Menu Samping (Sidebar) - Tanpa Tombol Notif -->
+    <!-- Menu Samping (Sidebar) -->
     <div id="sideMenu" class="side-menu">
-        <button id="btnCloseMenu" class="btn-close">×</button>
-        <h3>⚙️ Menu Pengaturan</h3>
-        <button id="btnDarkMode" class="menu-item-btn">🌙 Mode Gelap</button>
-        <button id="btnChangePassword" class="menu-btn">🔑 Ubah Sandi Admin</button>
+        <div class="side-menu-header">
+            <span>⚙️ Menu Pengaturan</span>
+            <button id="btnCloseMenu" class="btn-close">×</button>
+        </div>
+        <div class="side-menu-body">
+            <button id="btnDarkMode" class="menu-btn">🌙 Mode Gelap</button>
+            <button id="btnChangePassword" class="menu-btn">🔑 Ubah Sandi Admin</button>
+        </div>
     </div>
     <div id="menuOverlay" class="menu-overlay"></div>
 
-    <!-- Kotak Pop-up Sandi Admin Custom -->
-    <div id="passwordModal" class="modal-overlay">
-        <div class="modal-box">
+    <!-- Konten Utama -->
+    <div class="container">
+        <h1>📚 Tugas Kelas X-PM</h1>
+
+        <!-- Tombol Masuk Admin -->
+        <button id="btnLoginAdmin" class="btn-login">Masuk Sebagai Admin</button>
+
+        <!-- Form Tambah Tugas (Khusus Admin) -->
+        <div id="adminSection" class="admin-panel" style="display: none;">
+            <h3>Tambah Tugas Baru</h3>
+            <input type="text" id="inputMapel" placeholder="Nama Mata Pelajaran (Contoh: IPAS)">
+            <textarea id="inputTugas" placeholder="Keterangan / Soal Tugas..."></textarea>
+            <input type="text" id="inputGambar" placeholder="Link Gambar (Opsional)">
+            <button id="btnTambah" class="btn-submit">Posting Tugas</button>
+        </div>
+
+        <!-- Daftar Tugas Render Realtime -->
+        <div id="containerMapel">
+            <p style="text-align: center; color: #888;">Memuat tugas...</p>
+        </div>
+    </div>
+
+    <!-- Modal Sandi Admin -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
             <h3>Masukkan Sandi Admin</h3>
-            <p>Masukkan sandi untuk masuk ke mode admin.</p>
-            <input type="password" id="inputPassword" placeholder="Kata sandi...">
+            <input type="password" id="inputPassword" placeholder="Sandi..." class="modal-input">
             <div class="modal-buttons">
-                <button id="btnCancelPassword" class="btn-cancel">Batal</button>
-                <button id="btnSubmitPassword" class="btn-submit">Masuk</button>
+                <button id="btnSubmitPassword" class="btn-modal-ok">Masuk</button>
+                <button id="btnCancelPassword" class="btn-modal-cancel">Batal</button>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <h1>📚 Tugas Kelas X-PM</h1>
-        
-        <!-- Bagian Input Admin (Tersembunyi Default) -->
-        <div id="adminSection" class="input-section" style="display: none;">
-            <h3>Panel Admin Tambah Tugas</h3>
-            <input type="text" id="inputMapel" placeholder="Nama Mapel (Cth: Matematika)">
-            <textarea id="inputTugas" placeholder="Keterangan tugas atau soal..."></textarea>
-            <input type="text" id="inputGambar" placeholder="Link Gambar Soal (Opsional)">
-            <button id="btnTambah">Simpan Tugas</button>
-        </div>
-
-        <!-- Tombol Login Admin -->
-        <button id="btnLoginAdmin" class="btn-admin">Masuk Sebagai Admin</button>
-
-        <!-- Daftar Mapel Dinamis -->
-        <div id="containerMapel">
-            <p style="text-align:center; color:#888;">Memuat daftar tugas...</p>
+    <!-- Modal Ubah Sandi Admin Kustom -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <h3>Ubah Sandi Admin</h3>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Masukkan sandi lama dan sandi baru:</p>
+            <input type="password" id="inputOldPassword" placeholder="Sandi Saat Ini" class="modal-input">
+            <input type="password" id="inputNewPassword" placeholder="Sandi Baru" class="modal-input" style="margin-top: 8px;">
+            <div class="modal-buttons" style="margin-top: 15px;">
+                <button id="btnSubmitNewPassword" class="btn-modal-ok">Simpan</button>
+                <button id="btnCancelChangePassword" class="btn-modal-cancel">Batal</button>
+            </div>
         </div>
     </div>
 
+    <!-- Script Utama -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
