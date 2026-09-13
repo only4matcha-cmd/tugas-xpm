@@ -107,8 +107,8 @@ body {
     margin-top: 15px;
 }
 
-/* Background Gelap Transparan */
-.menu-overlay, .modal-overlay {
+/* Background Gelap Transparan untuk Menu Samping */
+.menu-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -119,32 +119,49 @@ body {
     display: none;
 }
 
-.menu-overlay.active, .modal-overlay.active {
-    display: flex;
+.menu-overlay.active {
+    display: block;
+}
+
+/* Background & Posisi Kotak Sandi Admin Custom di Tengah Layar */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 2000;
+    display: none;
     justify-content: center;
     align-items: center;
 }
 
-/* Kotak Pop-up Sandi Custom */
+.modal-overlay.active {
+    display: flex;
+}
+
 .modal-box {
     background-color: var(--container-bg);
     color: var(--text-color);
     padding: 20px;
-    border-radius: 10px;
-    width: 90%;
+    border-radius: 12px;
+    width: 85%;
     max-width: 320px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
     box-sizing: border-box;
+    border: 1px solid var(--card-border);
 }
 
 .modal-box h3 {
     margin-top: 0;
     font-size: 16px;
+    color: var(--text-color);
 }
 
 .modal-box p {
     font-size: 13px;
-    color: #777;
+    color: #888;
     margin-bottom: 15px;
 }
 
