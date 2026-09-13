@@ -135,7 +135,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Header & Dropdown Tema Gelap
+// Fungsi Pemuatan Tugas Realtime + Header Mapel Slim & Ringkas
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -161,18 +161,20 @@ function muatTugasRealtime() {
             const card = document.createElement('div');
             card.classList.add('mapel-card');
 
-            // Header Mapel Seimbang
+            // Header Mapel Dibuat Tipis (Padding 5px 12px)
             const header = document.createElement('div');
             header.classList.add('mapel-header');
             header.style.display = "flex";
             header.style.alignItems = "center";
             header.style.justifyContent = "space-between";
             header.style.position = "relative";
-            header.style.padding = "8px 15px"; // Dibuat pas/tidak terlalu besar
+            header.style.padding = "5px 12px"; 
+            header.style.minHeight = "auto";
+            header.style.lineHeight = "1.2";
 
-            // Spacer kiri
+            // Spacer kiri penyeimbang (24px)
             const spacer = document.createElement('div');
-            spacer.style.width = "30px";
+            spacer.style.width = "24px";
             header.appendChild(spacer);
 
             // Judul Mapel di Tengah
@@ -181,31 +183,36 @@ function muatTugasRealtime() {
             titleSpan.style.flexGrow = "1";
             titleSpan.style.textAlign = "center";
             titleSpan.style.fontWeight = "bold";
+            titleSpan.style.fontSize = "15px";
+            titleSpan.style.margin = "0";
             titleSpan.style.overflow = "hidden";
             titleSpan.style.textOverflow = "ellipsis";
             titleSpan.style.whiteSpace = "nowrap";
             header.appendChild(titleSpan);
 
-            // Tombol Titik Tiga (⋮) di Kanan
+            // Tombol Titik Tiga (⋮) Ringkas
             const btnMapelOptions = document.createElement('button');
             btnMapelOptions.textContent = "⋮";
             btnMapelOptions.style.background = "transparent";
             btnMapelOptions.style.color = "white";
             btnMapelOptions.style.border = "none";
-            btnMapelOptions.style.fontSize = "22px";
+            btnMapelOptions.style.fontSize = "18px";
             btnMapelOptions.style.fontWeight = "bold";
             btnMapelOptions.style.cursor = "pointer";
-            btnMapelOptions.style.width = "30px";
+            btnMapelOptions.style.width = "24px";
+            btnMapelOptions.style.height = "24px";
+            btnMapelOptions.style.lineHeight = "1";
+            btnMapelOptions.style.padding = "0";
             header.appendChild(btnMapelOptions);
 
-            // Menu Dropdown Tema Abu-Abu Gelap Elegan
+            // Menu Dropdown Tema Abu-Abu Gelap
             const mapelMenuDropdown = document.createElement('div');
             mapelMenuDropdown.style.display = "none";
             mapelMenuDropdown.style.position = "absolute";
-            mapelMenuDropdown.style.top = "42px";
+            mapelMenuDropdown.style.top = "36px"; // Disesuaikan dengan tinggi header yang lebih tipis
             mapelMenuDropdown.style.right = "10px";
-            mapelMenuDropdown.style.background = "#2d2d2d"; // Abu-abu gelap
-            mapelMenuDropdown.style.color = "#ffffff";     // Teks putih bersih
+            mapelMenuDropdown.style.background = "#2d2d2d";
+            mapelMenuDropdown.style.color = "#ffffff";
             mapelMenuDropdown.style.boxShadow = "0 6px 16px rgba(0,0,0,0.6)";
             mapelMenuDropdown.style.borderRadius = "8px";
             mapelMenuDropdown.style.zIndex = "10";
