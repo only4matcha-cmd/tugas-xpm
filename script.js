@@ -135,7 +135,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Header Mapel Seimbang
+// Fungsi Pemuatan Tugas Realtime + Header & Dropdown Tema Gelap
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -161,16 +161,16 @@ function muatTugasRealtime() {
             const card = document.createElement('div');
             card.classList.add('mapel-card');
 
-            // Header Mapel Menggunakan Flexbox & Spacer
+            // Header Mapel Seimbang
             const header = document.createElement('div');
             header.classList.add('mapel-header');
             header.style.display = "flex";
             header.style.alignItems = "center";
             header.style.justifyContent = "space-between";
             header.style.position = "relative";
-            header.style.padding = "10px 15px";
+            header.style.padding = "8px 15px"; // Dibuat pas/tidak terlalu besar
 
-            // Elemen Spacer di kiri (penyeimbang lebar tombol di kanan)
+            // Spacer kiri
             const spacer = document.createElement('div');
             spacer.style.width = "30px";
             header.appendChild(spacer);
@@ -186,7 +186,7 @@ function muatTugasRealtime() {
             titleSpan.style.whiteSpace = "nowrap";
             header.appendChild(titleSpan);
 
-            // Tombol Titik Tiga (⋮) di Pojok Kanan
+            // Tombol Titik Tiga (⋮) di Kanan
             const btnMapelOptions = document.createElement('button');
             btnMapelOptions.textContent = "⋮";
             btnMapelOptions.style.background = "transparent";
@@ -198,30 +198,31 @@ function muatTugasRealtime() {
             btnMapelOptions.style.width = "30px";
             header.appendChild(btnMapelOptions);
 
-            // Menu Dropdown Header Mapel
+            // Menu Dropdown Tema Abu-Abu Gelap Elegan
             const mapelMenuDropdown = document.createElement('div');
             mapelMenuDropdown.style.display = "none";
             mapelMenuDropdown.style.position = "absolute";
-            mapelMenuDropdown.style.top = "45px";
+            mapelMenuDropdown.style.top = "42px";
             mapelMenuDropdown.style.right = "10px";
-            mapelMenuDropdown.style.background = "#ffffff";
-            mapelMenuDropdown.style.color = "#333333";
-            mapelMenuDropdown.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+            mapelMenuDropdown.style.background = "#2d2d2d"; // Abu-abu gelap
+            mapelMenuDropdown.style.color = "#ffffff";     // Teks putih bersih
+            mapelMenuDropdown.style.boxShadow = "0 6px 16px rgba(0,0,0,0.6)";
             mapelMenuDropdown.style.borderRadius = "8px";
             mapelMenuDropdown.style.zIndex = "10";
             mapelMenuDropdown.style.overflow = "hidden";
-            mapelMenuDropdown.style.minWidth = "160px";
+            mapelMenuDropdown.style.minWidth = "170px";
+            mapelMenuDropdown.style.border = "1px solid #444";
 
             let tugasUtama = dataMapel[mapel][0]; 
             let adaGambar = tugasUtama.gambar && tugasUtama.gambar.trim() !== "";
 
-            // Opsi 1: Salin Text (Selalu Ada)
+            // Opsi 1: Salin Text
             const optionCopy = document.createElement('div');
             optionCopy.textContent = "📋 Salin Text";
             optionCopy.style.padding = "10px 14px";
             optionCopy.style.cursor = "pointer";
             optionCopy.style.fontSize = "14px";
-            optionCopy.style.borderBottom = adaGambar ? "1px solid #f0f0f0" : "none";
+            optionCopy.style.borderBottom = adaGambar ? "1px solid #444" : "none";
             optionCopy.addEventListener('click', () => {
                 navigator.clipboard.writeText(tugasUtama.teks).then(() => {
                     alert("Teks berhasil disalin!");
@@ -232,14 +233,14 @@ function muatTugasRealtime() {
             });
             mapelMenuDropdown.appendChild(optionCopy);
 
-            // Jika ada gambar, tambahkan Full Screen dan Download Image
+            // Jika ada gambar, tambahkan opsi Full Screen & Download Image
             if (adaGambar) {
                 const optionFull = document.createElement('div');
                 optionFull.textContent = "🔍 Full Screen";
                 optionFull.style.padding = "10px 14px";
                 optionFull.style.cursor = "pointer";
                 optionFull.style.fontSize = "14px";
-                optionFull.style.borderBottom = "1px solid #f0f0f0";
+                optionFull.style.borderBottom = "1px solid #444";
                 optionFull.addEventListener('click', () => {
                     const targetImg = card.querySelector('.tugas-gambar');
                     if (targetImg) {
@@ -260,7 +261,7 @@ function muatTugasRealtime() {
                 optionDownload.download = "Tugas-XPM.jpg";
                 optionDownload.style.display = "block";
                 optionDownload.style.padding = "10px 14px";
-                optionDownload.style.color = "#333333";
+                optionDownload.style.color = "#ffffff";
                 optionDownload.style.textDecoration = "none";
                 optionDownload.style.fontSize = "14px";
                 optionDownload.addEventListener('click', () => {
