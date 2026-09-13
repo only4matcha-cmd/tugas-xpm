@@ -28,6 +28,7 @@ const sideMenu = document.getElementById('sideMenu');
 const btnCloseMenu = document.getElementById('btnCloseMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const btnDarkMode = document.getElementById('btnDarkMode');
+const btnChangePassword = document.getElementById('btnChangePassword'); // Tombol Ubah Sandi Baru
 
 // Elemen Modal Sandi Custom
 const passwordModal = document.getElementById('passwordModal');
@@ -37,6 +38,9 @@ const btnCancelPassword = document.getElementById('btnCancelPassword');
 
 let isAdmin = false;
 adminSection.style.display = "none";
+
+// Ambil sandi admin dari localStorage, jika belum ada gunakan default "xpm123"
+let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
 
 // Cek memori Mode Gelap
 if (localStorage.getItem("darkMode") === "enabled") {
@@ -73,6 +77,29 @@ btnDarkMode.addEventListener('click', function() {
     }
 });
 
+// Fitur Ubah Sandi Admin dari Menu Samping
+btnChangePassword.addEventListener('click', () => {
+    // Tutup menu samping dulu
+    sideMenu.classList.remove('open');
+    menuOverlay.classList.remove('active');
+
+    let oldPass = prompt("Masukkan Sandi Admin saat ini:");
+    if (oldPass === null) return; // Jika dibatalkan
+
+    if (oldPass === currentAdminPassword) {
+        let newPass = prompt("Masukkan Sandi Admin yang BARU:");
+        if (newPass && newPass.trim() !== "") {
+            currentAdminPassword = newPass.trim();
+            localStorage.setItem("adminPassword", currentAdminPassword);
+            alert("Sandi admin berhasil diubah! Gunakan sandi baru untuk masuk berikutnya.");
+        } else {
+            alert("Sandi baru tidak boleh kosong!");
+        }
+    } else {
+        alert("Sandi lama salah! Gagal mengubah sandi.");
+    }
+});
+
 // Logika Admin dengan Modal Custom
 btnLoginAdmin.addEventListener('click', function() {
     if (!isAdmin) {
@@ -90,7 +117,7 @@ btnLoginAdmin.addEventListener('click', function() {
 
 btnSubmitPassword.addEventListener('click', function() {
     let sandi = inputPassword.value;
-    if (sandi === "xpm123") {
+    if (sandi === currentAdminPassword) {
         isAdmin = true;
         adminSection.style.display = "block";
         btnLoginAdmin.textContent = "Keluar Mode Admin";
@@ -172,12 +199,10 @@ function muatTugasRealtime() {
             header.style.minHeight = "auto";
             header.style.lineHeight = "1.2";
 
-            // Spacer kiri penyeimbang (24px)
             const spacer = document.createElement('div');
             spacer.style.width = "24px";
             header.appendChild(spacer);
 
-            // Judul Mapel di Tengah
             const titleSpan = document.createElement('span');
             titleSpan.textContent = mapel;
             titleSpan.style.flexGrow = "1";
@@ -190,7 +215,6 @@ function muatTugasRealtime() {
             titleSpan.style.whiteSpace = "nowrap";
             header.appendChild(titleSpan);
 
-            // Tombol Titik Tiga (⋮) Ringkas
             const btnMapelOptions = document.createElement('button');
             btnMapelOptions.textContent = "⋮";
             btnMapelOptions.style.background = "transparent";
@@ -205,11 +229,10 @@ function muatTugasRealtime() {
             btnMapelOptions.style.padding = "0";
             header.appendChild(btnMapelOptions);
 
-            // Menu Dropdown Tema Abu-Abu Gelap
             const mapelMenuDropdown = document.createElement('div');
             mapelMenuDropdown.style.display = "none";
             mapelMenuDropdown.style.position = "absolute";
-            mapelMenuDropdown.style.top = "36px"; // Disesuaikan dengan tinggi header yang lebih tipis
+            mapelMenuDropdown.style.top = "36px";
             mapelMenuDropdown.style.right = "10px";
             mapelMenuDropdown.style.background = "#2d2d2d";
             mapelMenuDropdown.style.color = "#ffffff";
@@ -223,7 +246,6 @@ function muatTugasRealtime() {
             let tugasUtama = dataMapel[mapel][0]; 
             let adaGambar = tugasUtama.gambar && tugasUtama.gambar.trim() !== "";
 
-            // Opsi 1: Salin Text
             const optionCopy = document.createElement('div');
             optionCopy.textContent = "📋 Salin Text";
             optionCopy.style.padding = "10px 14px";
@@ -240,7 +262,6 @@ function muatTugasRealtime() {
             });
             mapelMenuDropdown.appendChild(optionCopy);
 
-            // Jika ada gambar, tambahkan opsi Full Screen & Download Image
             if (adaGambar) {
                 const optionFull = document.createElement('div');
                 optionFull.textContent = "🔍 Full Screen";
