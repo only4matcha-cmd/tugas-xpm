@@ -135,7 +135,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime yang Bersih & Stabil
+// Fungsi Pemuatan Tugas Realtime + Tombol Unduh Gambar
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -183,6 +183,23 @@ function muatTugasRealtime() {
                     img.src = tugas.gambar;
                     img.classList.add('tugas-gambar');
                     itemDiv.appendChild(img);
+
+                    // Tombol Unduh Gambar
+                    const btnDownload = document.createElement('a');
+                    btnDownload.textContent = '📥 Unduh Gambar';
+                    btnDownload.href = tugas.gambar;
+                    btnDownload.target = '_blank';
+                    btnDownload.download = 'Tugas-XPM.jpg';
+                    btnDownload.style.display = "inline-block";
+                    btnDownload.style.marginTop = "8px";
+                    btnDownload.style.padding = "6px 12px";
+                    btnDownload.style.backgroundColor = "#4CAF50";
+                    btnDownload.style.color = "white";
+                    btnDownload.style.textDecoration = "none";
+                    btnDownload.style.borderRadius = "4px";
+                    btnDownload.style.fontSize = "14px";
+                    
+                    itemDiv.appendChild(btnDownload);
                 }
 
                 if (isAdmin) {
