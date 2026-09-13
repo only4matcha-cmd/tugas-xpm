@@ -161,9 +161,9 @@ async function requestNotificationPermission() {
             const token = await getToken(messaging, { 
                 vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4' 
             });
-            
             if (token) {
                 console.log('FCM Token Perangkat:', token);
+                alert('Token HP Kamu: ' + token);
             } else {
                 console.log('Gagal mendapatkan token FCM.');
             }
