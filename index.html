@@ -6,19 +6,18 @@
     <title>Papan Tugas Kelas X-PM</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4CAF50">
+    <meta name="theme-color" content="#4CAF50">
 </head>
 <body>
 
     <!-- Tombol Menu Garis Tiga (Sidebar) -->
     <button id="btnMenu" class="btn-menu">☰</button>
 
-    <!-- Menu Samping (Sidebar) -->
+    <!-- Menu Samping (Sidebar) - Tanpa Tombol Notif -->
     <div id="sideMenu" class="side-menu">
         <button id="btnCloseMenu" class="btn-close">×</button>
         <h3>⚙️ Menu Pengaturan</h3>
         <button id="btnDarkMode" class="menu-item-btn">🌙 Mode Gelap</button>
-        <button id="btnNotif" class="menu-item-btn">🔕 Notifikasi: OFF</button>
     </div>
     <div id="menuOverlay" class="menu-overlay"></div>
 
@@ -43,7 +42,7 @@
             <h3>Panel Admin Tambah Tugas</h3>
             <input type="text" id="inputMapel" placeholder="Nama Mapel (Cth: Matematika)">
             <textarea id="inputTugas" placeholder="Keterangan tugas atau soal..."></textarea>
-            <input type="text" id="inputGambar" placeholder="Link Gambar Soal (Opsional, Boleh dikosongkan)">
+            <input type="text" id="inputGambar" placeholder="Link Gambar Soal (Opsional)">
             <button id="btnTambah">Simpan Tugas</button>
         </div>
 
@@ -52,7 +51,7 @@
 
         <!-- Daftar Mapel Dinamis -->
         <div id="containerMapel">
-            <p id="loadingText" style="text-align:center; color:#888;">Memuat daftar tugas...</p>
+            <p style="text-align:center; color:#888;">Memuat daftar tugas...</p>
         </div>
     </div>
 
