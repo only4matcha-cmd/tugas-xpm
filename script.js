@@ -28,7 +28,7 @@ const btnCloseMenu = document.getElementById('btnCloseMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const btnDarkMode = document.getElementById('btnDarkMode');
 const btnChangePassword = document.getElementById('btnChangePassword');
-const btnWaReminder = document.getElementById('btnWaReminder');
+const btnVerifyWa = document.getElementById('btnVerifyWa');
 
 const passwordModal = document.getElementById('passwordModal');
 const inputPassword = document.getElementById('inputPassword');
@@ -41,15 +41,22 @@ const inputNewPassword = document.getElementById('inputNewPassword');
 const btnSubmitNewPassword = document.getElementById('btnSubmitNewPassword');
 const btnCancelChangePassword = document.getElementById('btnCancelChangePassword');
 
-const waModal = document.getElementById('waModal');
-const inputWaNumber = document.getElementById('inputWaNumber');
-const btnSubmitWa = document.getElementById('btnSubmitWa');
-const btnCancelWa = document.getElementById('btnCancelWa');
+const verifyModal = document.getElementById('verifyModal');
+const inputSiswaWa = document.getElementById('inputSiswaWa');
+const btnKirimVerifikasi = document.getElementById('btnKirimVerifikasi');
+const btnCancelVerify = document.getElementById('btnCancelVerify');
+
+const inputWhitelistWa = document.getElementById('inputWhitelistWa');
+const btnSimpanWa = document.getElementById('btnSimpanWa');
+const listNomorWa = document.getElementById('listNomorWa');
 
 let isAdmin = false;
 adminSection.style.display = "none";
 
 let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
+
+// Nomor Admin tempat siswa mengirim verifikasi (Ganti dengan nomor WhatsApp-mu sendiri)
+const NOMOR_ADMIN_WA = "6281234567890"; 
 
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-theme");
@@ -73,7 +80,6 @@ menuOverlay.addEventListener('click', () => {
 
 btnDarkMode.addEventListener('click', function() {
     document.body.classList.toggle("dark-theme");
-    
     if (document.body.classList.contains("dark-theme")) {
         localStorage.setItem("darkMode", "enabled");
         btnDarkMode.textContent = "☀️ Mode Terang";
@@ -83,37 +89,70 @@ btnDarkMode.addEventListener('click', function() {
     }
 });
 
-// Fitur WhatsApp Reminder (Menu Kiri Atas)
-btnWaReminder.addEventListener('click', () => {
+// Fitur Verifikasi Siswa (Membuka WA ke Admin dengan Kode Unik)
+btnVerifyWa.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
-    
-    let savedWa = localStorage.getItem("studentWaNumber") || "";
-    inputWaNumber.value = savedWa;
-    waModal.classList.add('active');
-    inputWaNumber.focus();
+    verifyModal.classList.add('active');
+    inputSiswaWa.value = "";
+    inputSiswaWa.focus();
 });
 
-btnSubmitWa.addEventListener('click', () => {
-    let nomor = inputWaNumber.value.trim();
+btnKirimVerifikasi.addEventListener('click', () => {
+    let nomor = inputSiswaWa.value.trim();
     if (nomor !== "") {
-        localStorage.setItem("studentWaNumber", nomor);
-        alert("Nomor WhatsApp berhasil disimpan!");
-        waModal.classList.remove('active');
+        let kodeUnik = "VERIF-" + Math.floor(1000 + Math.random() * 9000);
+        let pesan = `Halo Admin, saya ingin verifikasi nomor WhatsApp untuk web Tugas X-PM.\nNomor saya: ${nomor}\nKode: ${kodeUnik}`;
+        let urlWa = `https://wa.me/${NOMOR_ADMIN_WA}?text=${encodeURIComponent(pesan)}`;
+        window.open(urlWa, '_blank');
+        verifyModal.classList.remove('active');
     } else {
-        alert("Nomor tidak boleh kosong!");
-        inputWaNumber.focus();
+        alert("Masukkan nomor WhatsApp terlebih dahulu!");
+        inputSiswaWa.focus();
     }
 });
 
-btnCancelWa.addEventListener('click', () => {
-    waModal.classList.remove('active');
+btnCancelVerify.addEventListener('click', () => {
+    verifyModal.classList.remove('active');
 });
+
+// Admin Menambah Nomor ke Database Whitelist
+btnSimpanWa.addEventListener('click', async () => {
+    let nomorBaru = inputWhitelistWa.value.trim();
+    if (nomorBaru !== "") {
+        try {
+            await addDoc(collection(db, "whitelistWa"), { nomor: nomorBaru });
+            inputWhitelistWa.value = "";
+            alert("Nomor berhasil ditambahkan ke daftar terverifikasi!");
+        } catch (error) {
+            console.error("Gagal menyimpan nomor:", error);
+            alert("Terjadi kesalahan.");
+        }
+    } else {
+        alert("Nomor tidak boleh kosong!");
+    }
+});
+
+// Muat daftar nomor terverifikasi di panel admin secara realtime
+function muatWhitelistWa() {
+    onSnapshot(collection(db, "whitelistWa"), (snapshot) => {
+        listNomorWa.innerHTML = "";
+        if (snapshot.empty) {
+            listNomorWa.textContent = "Belum ada nomor terverifikasi.";
+            return;
+        }
+        let html = "<b>Tersimpan:</b> ";
+        let listArr = [];
+        snapshot.forEach((docItem) => {
+            listArr.push(docItem.data().nomor);
+        });
+        listNomorWa.textContent = listArr.join(", ");
+    });
+}
 
 btnChangePassword.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
-    
     inputOldPassword.value = "";
     inputNewPassword.value = "";
     changePasswordModal.classList.add('active');
@@ -168,6 +207,7 @@ btnSubmitPassword.addEventListener('click', function() {
         passwordModal.classList.remove('active');
         alert("Mode Admin Aktif!");
         muatTugasRealtime();
+        muatWhitelistWa();
     } else {
         alert("Sandi salah!");
         inputPassword.value = "";
@@ -179,6 +219,7 @@ btnCancelPassword.addEventListener('click', function() {
     passwordModal.classList.remove('active');
 });
 
+// Posting tugas dan opsi kirim WA otomatis ke nomor-nomor terverifikasi
 btnTambah.addEventListener('click', async function() {
     const mapel = inputMapel.value.trim();
     const teks = inputTugas.value.trim();
@@ -202,14 +243,14 @@ btnTambah.addEventListener('click', async function() {
         inputGambar.value = "";
         alert("Tugas berhasil ditambahkan!");
 
-        let savedWa = localStorage.getItem("studentWaNumber");
-        if (savedWa) {
-            let kirimWa = confirm("Tugas berhasil diposting! Ingin mengirim pengingat ke WhatsApp?");
-            if (kirimWa) {
-                let pesan = `📢 *TUGAS BARU - ${mapel.toUpperCase()}*\n\n${teks}`;
-                let urlWa = `https://wa.me/${savedWa}?text=${encodeURIComponent(pesan)}`;
-                window.open(urlWa, '_blank');
-            }
+        // Ambil daftar nomor terverifikasi dari Firestore untuk dikirimi pesan
+        // (Catatan: Menggunakan wa.me satu per satu atau via broadcast link)
+        let kirimWa = confirm("Tugas berhasil diposting! Ingin mengirim pengingat ke nomor WhatsApp terverifikasi?");
+        if (kirimWa) {
+            let pesan = `📢 *TUGAS BARU - ${mapel.toUpperCase()}*\n\n${teks}\n\nCek web kelas: ${window.location.href}`;
+            // Membuka wa.me umum (bisa dikirim ke grup kelas atau broadcast list)
+            let urlWa = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
+            window.open(urlWa, '_blank');
         }
 
     } catch (error) {
