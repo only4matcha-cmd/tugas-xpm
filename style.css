@@ -33,7 +33,7 @@ body {
     transition: background-color 0.3s ease;
 }
 
-/* Tombol Garis Tiga (Hamburger Menu) di Pojok Kiri Atas */
+/* Tombol Garis Tiga (Hamburger Menu) */
 .btn-menu {
     position: fixed;
     top: 15px;
@@ -53,7 +53,7 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Menu Samping (Sidebar) - WAJIB tersembunyi di kiri */
+/* Menu Samping (Sidebar) */
 .side-menu {
     position: fixed !important;
     top: 0 !important;
@@ -107,8 +107,8 @@ body {
     margin-top: 15px;
 }
 
-/* Background Gelap Transparan saat Menu Dibuka */
-.menu-overlay {
+/* Background Gelap Transparan */
+.menu-overlay, .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -119,8 +119,47 @@ body {
     display: none;
 }
 
-.menu-overlay.active {
-    display: block;
+.menu-overlay.active, .modal-overlay.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Kotak Pop-up Sandi Custom */
+.modal-box {
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 320px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-sizing: border-box;
+}
+
+.modal-box h3 {
+    margin-top: 0;
+    font-size: 16px;
+}
+
+.modal-box p {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-cancel {
+    background-color: #6c757d !important;
+}
+
+.btn-submit {
+    background-color: #4CAF50 !important;
 }
 
 .container {
