@@ -147,7 +147,7 @@ btnSubmitPassword.addEventListener('click', function() {
         alert("Mode Admin Aktif!");
         muatTugasRealtime();
         
-        // Panggil fungsi permintaan izin & ambil token
+        // Panggil fungsi permintaan izin & ambil token FCM
         requestNotificationPermission();
     } else {
         alert("Sandi salah!");
@@ -160,19 +160,15 @@ btnCancelPassword.addEventListener('click', function() {
     passwordModal.classList.remove('active');
 });
 
-// Fungsi Meminta Izin Notifikasi & Mengambil Token
+// Fungsi Meminta Izin Notifikasi & Mengambil Token Secara Otomatis
 async function requestNotificationPermission() {
     try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
             console.log('Izin notifikasi diberikan.');
             
-            // Daftarkan service worker secara eksplisit
-            const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-            
             const token = await getToken(messaging, { 
-                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4',
-                serviceWorkerRegistration: registration
+                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4'
             });
             
             if (token) {
@@ -397,17 +393,17 @@ function muatTugasRealtime() {
                     itemDiv.appendChild(img);
                 }
 
-                if (isAdmin) {
-                    const btnHapus = document.createElement('button');
-                    btnHapus.textContent = 'Hapus Tugas Ini';
-                    btnHapus.classList.add('hapus');
-                    btnHapus.addEventListener('click', async function() {
-                        if (confirm("Yakin ingin menghapus tugas ini?")) {
-                            await deleteDoc(doc(db, "tugasKelas", tugas.id));
-                        }
-                    });
-                    itemDiv.appendChild(btnHapus);
-                }
+            if (isAdmin) {
+                const btnHapus = document.createElement('button');
+                btnHapus.textContent = 'Hapus Tugas Ini';
+                btnHapus.classList.add('hapus');
+                btnHapus.addEventListener('click', async function() {
+                    if (confirm("Yakin ingin menghapus tugas ini?")) {
+                        await deleteDoc(doc(db, "tugasKelas", tugas.id));
+                    }
+                });
+                itemDiv.appendChild(btnHapus);
+            }
 
                 body.appendChild(itemDiv);
             });
