@@ -14,20 +14,20 @@
     <!-- Tombol Menu Samping (Garis Tiga) -->
     <button id="btnMenu" class="btn-menu">☰</button>
 
-    <!-- Menu Samping (Sidebar) dengan Sistem Tab Kategori -->
+    <!-- Menu Samping (Sidebar) dengan Sistem Tab Kategori Horizontal Ramping -->
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
             <span id="sidebarTitle">⚙️ Menu Pengaturan</span>
             <button id="btnCloseMenu" class="btn-close">×</button>
         </div>
         
-        <div class="side-menu-body" style="padding: 15px; display: flex; flex-direction: column; gap: 12px;">
+        <div class="side-menu-body" style="padding: 12px; display: flex; flex-direction: column; gap: 10px;">
             
-            <!-- TAMPILAN UTAMA: 3 Tombol Kategori Sejajar -->
-            <div id="menuMainCategories" style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="tabGeneral" class="menu-btn" style="width: 100%; text-align: left; font-weight: bold;">📁 General</button>
-                <button id="tabNotifikasi" class="menu-btn" style="width: 100%; text-align: left; font-weight: bold;">🔔 Notifikasi</button>
-                <button id="tabKeamanan" class="menu-btn" style="width: 100%; text-align: left; font-weight: bold;">🔒 Keamanan</button>
+            <!-- TAMPILAN UTAMA: 3 Tombol Sejajar Menyamping & Ramping -->
+            <div id="menuMainCategories" style="display: flex; flex-direction: row; gap: 6px; justify-content: space-between;">
+                <button id="tabGeneral" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: bold; background: #333; color: #fff; border: 1px solid #555; border-radius: 6px; cursor: pointer; text-align: center;">📁 General</button>
+                <button id="tabNotifikasi" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: bold; background: #333; color: #fff; border: 1px solid #555; border-radius: 6px; cursor: pointer; text-align: center;">🔔 Notifikasi</button>
+                <button id="tabKeamanan" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: bold; background: #333; color: #fff; border: 1px solid #555; border-radius: 6px; cursor: pointer; text-align: center;">🔒 Keamanan</button>
             </div>
 
             <!-- ISI KATEGORI GENERAL -->
