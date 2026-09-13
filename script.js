@@ -135,7 +135,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Titik Tiga di Header Mapel
+// Fungsi Pemuatan Tugas Realtime + Header Mapel Sempurna
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -161,35 +161,47 @@ function muatTugasRealtime() {
             const card = document.createElement('div');
             card.classList.add('mapel-card');
 
-            // Header Mapel (Dibuat relative agar tombol titik tiga bisa menempel di kanan)
+            // Header Mapel 
             const header = document.createElement('div');
             header.classList.add('mapel-header');
             header.style.position = "relative";
             header.style.display = "flex";
-            header.style.justifyContent = "space-between";
             header.style.alignItems = "center";
+            header.style.justifyContent = "center";
 
+            // Judul Mapel Posisi Mutlak di Tengah
             const titleSpan = document.createElement('span');
             titleSpan.textContent = mapel;
+            titleSpan.style.position = "absolute";
+            titleSpan.style.left = "50%";
+            titleSpan.style.transform = "translateX(-50%)";
+            titleSpan.style.maxWidth = "70%";
+            titleSpan.style.overflow = "hidden";
+            titleSpan.style.textOverflow = "ellipsis";
+            titleSpan.style.whiteSpace = "nowrap";
             header.appendChild(titleSpan);
 
-            // Tombol Titik Tiga (⋮) di Header Mapel
+            // Tombol Titik Tiga (⋮) di Pojok Kanan Atas Header
             const btnMapelOptions = document.createElement('button');
             btnMapelOptions.textContent = "⋮";
+            btnMapelOptions.style.position = "absolute";
+            btnMapelOptions.style.right = "10px";
+            btnMapelOptions.style.top = "50%";
+            btnMapelOptions.style.transform = "translateY(-50%)";
             btnMapelOptions.style.background = "transparent";
             btnMapelOptions.style.color = "white";
             btnMapelOptions.style.border = "none";
-            btnMapelOptions.style.fontSize = "20px";
+            btnMapelOptions.style.fontSize = "22px";
             btnMapelOptions.style.fontWeight = "bold";
             btnMapelOptions.style.cursor = "pointer";
-            btnMapelOptions.style.padding = "0 8px";
+            btnMapelOptions.style.padding = "4px 8px";
             header.appendChild(btnMapelOptions);
 
             // Menu Dropdown Header Mapel
             const mapelMenuDropdown = document.createElement('div');
             mapelMenuDropdown.style.display = "none";
             mapelMenuDropdown.style.position = "absolute";
-            mapelMenuDropdown.style.top = "40px";
+            mapelMenuDropdown.style.top = "45px";
             mapelMenuDropdown.style.right = "10px";
             mapelMenuDropdown.style.background = "#ffffff";
             mapelMenuDropdown.style.color = "#333333";
@@ -199,11 +211,10 @@ function muatTugasRealtime() {
             mapelMenuDropdown.style.overflow = "hidden";
             mapelMenuDropdown.style.minWidth = "160px";
 
-            // Ambil data tugas pertama pada mapel ini untuk dijadikan acuan tombol aksi
             let tugasUtama = dataMapel[mapel][0]; 
             let adaGambar = tugasUtama.gambar && tugasUtama.gambar.trim() !== "";
 
-            // Pilihan 1: Salin Text (Selalu ada)
+            // Opsi 1: Salin Text (Selalu Ada)
             const optionCopy = document.createElement('div');
             optionCopy.textContent = "📋 Salin Text";
             optionCopy.style.padding = "10px 14px";
@@ -220,9 +231,8 @@ function muatTugasRealtime() {
             });
             mapelMenuDropdown.appendChild(optionCopy);
 
-            // Jika ada gambar, tambahkan opsi Full Screen dan Download Image
+            // Jika ada gambar, tambahkan Full Screen dan Download Image
             if (adaGambar) {
-                // Pilihan 2: Full Screen
                 const optionFull = document.createElement('div');
                 optionFull.textContent = "🔍 Full Screen";
                 optionFull.style.padding = "10px 14px";
@@ -230,7 +240,6 @@ function muatTugasRealtime() {
                 optionFull.style.fontSize = "14px";
                 optionFull.style.borderBottom = "1px solid #f0f0f0";
                 optionFull.addEventListener('click', () => {
-                    // Cari elemen gambar target di card ini
                     const targetImg = card.querySelector('.tugas-gambar');
                     if (targetImg) {
                         if (targetImg.requestFullscreen) {
@@ -243,7 +252,6 @@ function muatTugasRealtime() {
                 });
                 mapelMenuDropdown.appendChild(optionFull);
 
-                // Pilihan 3: Download Image
                 const optionDownload = document.createElement('a');
                 optionDownload.textContent = "📥 Download Image";
                 optionDownload.href = tugasUtama.gambar;
