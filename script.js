@@ -31,21 +31,14 @@ const btnDarkMode = document.getElementById('btnDarkMode');
 const btnChangePassword = document.getElementById('btnChangePassword');
 const btnVerifyWa = document.getElementById('btnVerifyWa');
 
-// Elemen Navigasi Tab Sidebar
-const menuMainCategories = document.getElementById('menuMainCategories');
-const sidebarTitle = document.getElementById('sidebarTitle');
-
+// Elemen Tab Sidebar
 const tabGeneral = document.getElementById('tabGeneral');
-const contentGeneral = document.getElementById('contentGeneral');
-const btnBackFromGeneral = document.getElementById('btnBackFromGeneral');
-
 const tabNotifikasi = document.getElementById('tabNotifikasi');
-const contentNotifikasi = document.getElementById('contentNotifikasi');
-const btnBackFromNotifikasi = document.getElementById('btnBackFromNotifikasi');
-
 const tabKeamanan = document.getElementById('tabKeamanan');
+
+const contentGeneral = document.getElementById('contentGeneral');
+const contentNotifikasi = document.getElementById('contentNotifikasi');
 const contentKeamanan = document.getElementById('contentKeamanan');
-const btnBackFromKeamanan = document.getElementById('btnBackFromKeamanan');
 
 const passwordModal = document.getElementById('passwordModal');
 const inputPassword = document.getElementById('inputPassword');
@@ -78,18 +71,54 @@ if (localStorage.getItem("darkMode") === "enabled") {
     btnDarkMode.textContent = "☀️ Mode Terang";
 }
 
-// Fungsi Reset Tampilan Sidebar ke Menu Utama
-function resetSidebarMenu() {
-    menuMainCategories.style.display = "flex";
-    contentGeneral.style.display = "none";
+// Fungsi Tab Sidebar (Default General)
+function bukaTabGeneral() {
+    contentGeneral.style.display = "flex";
     contentNotifikasi.style.display = "none";
     contentKeamanan.style.display = "none";
-    sidebarTitle.textContent = "⚙️ Menu Pengaturan";
+    
+    tabGeneral.style.color = "#fff";
+    tabGeneral.style.borderBottom = "2px solid #7E57C2";
+    tabNotifikasi.style.color = "#888";
+    tabNotifikasi.style.borderBottom = "none";
+    tabKeamanan.style.color = "#888";
+    tabKeamanan.style.borderBottom = "none";
 }
 
-// Navigasi Sidebar Utama
+function bukaTabNotifikasi() {
+    contentGeneral.style.display = "none";
+    contentNotifikasi.style.display = "flex";
+    contentKeamanan.style.display = "none";
+    
+    tabNotifikasi.style.color = "#fff";
+    tabNotifikasi.style.borderBottom = "2px solid #7E57C2";
+    tabGeneral.style.color = "#888";
+    tabGeneral.style.borderBottom = "none";
+    tabKeamanan.style.color = "#888";
+    tabKeamanan.style.borderBottom = "none";
+}
+
+function bukaTabKeamanan() {
+    contentGeneral.style.display = "none";
+    contentNotifikasi.style.display = "none";
+    contentKeamanan.style.display = "flex";
+    
+    tabKeamanan.style.color = "#fff";
+    tabKeamanan.style.borderBottom = "2px solid #7E57C2";
+    tabGeneral.style.color = "#888";
+    tabGeneral.style.borderBottom = "none";
+    tabNotifikasi.style.color = "#888";
+    tabNotifikasi.style.borderBottom = "none";
+}
+
+// Event Klik Tab
+tabGeneral.addEventListener('click', bukaTabGeneral);
+tabNotifikasi.addEventListener('click', bukaTabNotifikasi);
+tabKeamanan.addEventListener('click', bukaTabKeamanan);
+
+// Navigasi Sidebar Buka & Tutup
 btnMenu.addEventListener('click', () => {
-    resetSidebarMenu();
+    bukaTabGeneral(); // Otomatis buka General setiap sidebar dibuka
     sideMenu.classList.add('open');
     menuOverlay.classList.add('active');
 });
@@ -97,36 +126,12 @@ btnMenu.addEventListener('click', () => {
 btnCloseMenu.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
-    resetSidebarMenu();
 });
 
 menuOverlay.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
-    resetSidebarMenu();
 });
-
-// Interaksi Tab Sidebar Kategori
-tabGeneral.addEventListener('click', () => {
-    menuMainCategories.style.display = "none";
-    contentGeneral.style.display = "flex";
-    sidebarTitle.textContent = "📁 General";
-});
-btnBackFromGeneral.addEventListener('click', resetSidebarMenu);
-
-tabNotifikasi.addEventListener('click', () => {
-    menuMainCategories.style.display = "none";
-    contentNotifikasi.style.display = "flex";
-    sidebarTitle.textContent = "🔔 Notifikasi";
-});
-btnBackFromNotifikasi.addEventListener('click', resetSidebarMenu);
-
-tabKeamanan.addEventListener('click', () => {
-    menuMainCategories.style.display = "none";
-    contentKeamanan.style.display = "flex";
-    sidebarTitle.textContent = "🔒 Keamanan";
-});
-btnBackFromKeamanan.addEventListener('click', resetSidebarMenu);
 
 // Dark Mode
 btnDarkMode.addEventListener('click', function() {
@@ -144,7 +149,6 @@ btnDarkMode.addEventListener('click', function() {
 btnVerifyWa.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
-    resetSidebarMenu();
     verifyModal.classList.add('active');
     inputSiswaWa.value = "";
     inputSiswaWa.focus();
@@ -200,7 +204,7 @@ btnSubmitPassword.addEventListener('click', function() {
     }
 });
 
-btnCancelPassword.addEventListener('click', function() {
+btnCancelPassword.addEventListener('click', () => {
     passwordModal.classList.remove('active');
 });
 
@@ -208,7 +212,6 @@ btnCancelPassword.addEventListener('click', function() {
 btnChangePassword.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
-    resetSidebarMenu();
     inputOldPassword.value = "";
     inputNewPassword.value = "";
     changePasswordModal.classList.add('active');
