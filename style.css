@@ -31,7 +31,7 @@ h1 {
     padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
-    z-index: 100;
+    z-index: 1000;
 }
 
 /* Sidebar Menu Samping */
@@ -39,7 +39,7 @@ h1 {
     position: fixed;
     top: 0;
     left: -280px;
-    width: 260px;
+    width: 270px;
     height: 100%;
     background-color: #1e1e1e;
     box-shadow: 4px 0 15px rgba(0,0,0,0.5);
@@ -72,19 +72,45 @@ h1 {
 }
 
 .side-menu-body {
-    padding: 20px;
+    padding: 15px;
 }
 
-/* Tombol Menu Samping Seragam & Di Tengah */
+/* Tombol Kategori Sidebar Sejajar Menyamping & Ramping */
+.menu-category-container {
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.menu-tab-btn {
+    flex: 1;
+    padding: 8px 2px;
+    background-color: #2d2d2d;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.menu-tab-btn:hover {
+    background-color: #3d3d3d;
+}
+
+/* Tombol Menu Samping Seragam */
 .menu-btn {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     margin-bottom: 10px;
     background-color: #2d2d2d;
     color: white;
     border: 1px solid #444;
     border-radius: 8px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     text-align: center;
     cursor: pointer;
@@ -107,7 +133,7 @@ h1 {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s, visibility 0.3s;
-    z-index: 1000;
+    z-index: 998;
 }
 
 .menu-overlay.active {
@@ -220,7 +246,7 @@ h1 {
     display: block;
 }
 
-/* Modal Kustom (Diperbaiki agar tersembunyi secara default) */
+/* Modal Kustom */
 .modal {
     position: fixed;
     top: 0;
@@ -302,6 +328,16 @@ body.dark-theme .side-menu-header {
 
 body.dark-theme .btn-close {
     color: #333;
+}
+
+body.dark-theme .menu-tab-btn {
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+body.dark-theme .menu-tab-btn:hover {
+    background-color: #d0d0d0;
 }
 
 body.dark-theme .menu-btn {
