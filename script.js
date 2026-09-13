@@ -160,15 +160,35 @@ btnCancelPassword.addEventListener('click', function() {
     passwordModal.classList.remove('active');
 });
 
-// Fungsi Meminta Izin Notifikasi & Mengambil Token Secara Otomatis
+// Fungsi Meminta Izin Notifikasi & Mengambil Token dengan Service Worker Virtual
 async function requestNotificationPermission() {
     try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
             console.log('Izin notifikasi diberikan.');
             
+            const swCode = `
+                importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
+                importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
+                firebase.initializeApp({
+                  apiKey: "AIzaSyCmf_eSwBYbCFCAh_7gwdkDUjFLZhGHF7A",
+                  authDomain: "tugas-xpm.firebaseapp.com",
+                  projectId: "tugas-xpm",
+                  storageBucket: "tugas-xpm.firebasestorage.app",
+                  messagingSenderId: "1092797132447",
+                  appId: "1:1092797132447:web:066b764fc219dea2223caa",
+                  measurementId: "G-NBEB4F1PWW"
+                });
+                const messaging = firebase.messaging();
+            `;
+            
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            const registration = await navigator.serviceWorker.register(swUrl);
+            
             const token = await getToken(messaging, { 
-                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4'
+                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4',
+                serviceWorkerRegistration: registration
             });
             
             if (token) {
@@ -393,17 +413,17 @@ function muatTugasRealtime() {
                     itemDiv.appendChild(img);
                 }
 
-            if (isAdmin) {
-                const btnHapus = document.createElement('button');
-                btnHapus.textContent = 'Hapus Tugas Ini';
-                btnHapus.classList.add('hapus');
-                btnHapus.addEventListener('click', async function() {
-                    if (confirm("Yakin ingin menghapus tugas ini?")) {
-                        await deleteDoc(doc(db, "tugasKelas", tugas.id));
-                    }
-                });
-                itemDiv.appendChild(btnHapus);
-            }
+                if (isAdmin) {
+                    const btnHapus = document.createElement('button');
+                    btnHapus.textContent = 'Hapus Tugas Ini';
+                    btnHapus.classList.add('hapus');
+                    btnHapus.addEventListener('click', async function() {
+                        if (confirm("Yakin ingin menghapus tugas ini?")) {
+                            await deleteDoc(doc(db, "tugasKelas", tugas.id));
+                        }
+                    });
+                    itemDiv.appendChild(btnHapus);
+                }
 
                 body.appendChild(itemDiv);
             });
