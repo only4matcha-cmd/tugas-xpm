@@ -135,7 +135,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Header Mapel Sempurna
+// Fungsi Pemuatan Tugas Realtime + Header Mapel Seimbang
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -161,40 +161,41 @@ function muatTugasRealtime() {
             const card = document.createElement('div');
             card.classList.add('mapel-card');
 
-            // Header Mapel 
+            // Header Mapel Menggunakan Flexbox & Spacer
             const header = document.createElement('div');
             header.classList.add('mapel-header');
-            header.style.position = "relative";
             header.style.display = "flex";
             header.style.alignItems = "center";
-            header.style.justifyContent = "center";
+            header.style.justifyContent = "space-between";
+            header.style.position = "relative";
+            header.style.padding = "10px 15px";
 
-            // Judul Mapel Posisi Mutlak di Tengah
+            // Elemen Spacer di kiri (penyeimbang lebar tombol di kanan)
+            const spacer = document.createElement('div');
+            spacer.style.width = "30px";
+            header.appendChild(spacer);
+
+            // Judul Mapel di Tengah
             const titleSpan = document.createElement('span');
             titleSpan.textContent = mapel;
-            titleSpan.style.position = "absolute";
-            titleSpan.style.left = "50%";
-            titleSpan.style.transform = "translateX(-50%)";
-            titleSpan.style.maxWidth = "70%";
+            titleSpan.style.flexGrow = "1";
+            titleSpan.style.textAlign = "center";
+            titleSpan.style.fontWeight = "bold";
             titleSpan.style.overflow = "hidden";
             titleSpan.style.textOverflow = "ellipsis";
             titleSpan.style.whiteSpace = "nowrap";
             header.appendChild(titleSpan);
 
-            // Tombol Titik Tiga (⋮) di Pojok Kanan Atas Header
+            // Tombol Titik Tiga (⋮) di Pojok Kanan
             const btnMapelOptions = document.createElement('button');
             btnMapelOptions.textContent = "⋮";
-            btnMapelOptions.style.position = "absolute";
-            btnMapelOptions.style.right = "10px";
-            btnMapelOptions.style.top = "50%";
-            btnMapelOptions.style.transform = "translateY(-50%)";
             btnMapelOptions.style.background = "transparent";
             btnMapelOptions.style.color = "white";
             btnMapelOptions.style.border = "none";
             btnMapelOptions.style.fontSize = "22px";
             btnMapelOptions.style.fontWeight = "bold";
             btnMapelOptions.style.cursor = "pointer";
-            btnMapelOptions.style.padding = "4px 8px";
+            btnMapelOptions.style.width = "30px";
             header.appendChild(btnMapelOptions);
 
             // Menu Dropdown Header Mapel
