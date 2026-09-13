@@ -24,8 +24,8 @@ h1 {
     margin-top: 5px;
 }
 
+/* Panel admin diatur agar aman untuk disembunyikan dan tidak memaksa tampil */
 .input-section {
-    display: block !important;
     margin-bottom: 15px;
     background: #f1f3f5;
     padding: 12px;
@@ -40,8 +40,8 @@ h1 {
 }
 
 input, textarea {
-    width: 100% !important;
-    display: block !important;
+    width: 100%;
+    display: block;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
