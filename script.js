@@ -135,7 +135,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Tombol Unduh Gambar
+// Fungsi Pemuatan Tugas Realtime + Menu Titik Tiga Gambar
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -179,27 +179,99 @@ function muatTugasRealtime() {
                 itemDiv.appendChild(teksP);
 
                 if (tugas.gambar && tugas.gambar.trim() !== "") {
+                    // Container pembungkus gambar agar tombol titik tiga bisa melayang di pojok kanan atas
+                    const imageWrapper = document.createElement('div');
+                    imageWrapper.style.position = "relative";
+                    imageWrapper.style.marginTop = "10px";
+
                     const img = document.createElement('img');
                     img.src = tugas.gambar;
                     img.classList.add('tugas-gambar');
-                    itemDiv.appendChild(img);
+                    img.style.width = "100%";
+                    img.style.borderRadius = "6px";
+                    imageWrapper.appendChild(img);
 
-                    // Tombol Unduh Gambar
-                    const btnDownload = document.createElement('a');
-                    btnDownload.textContent = '📥 Unduh Gambar';
-                    btnDownload.href = tugas.gambar;
-                    btnDownload.target = '_blank';
-                    btnDownload.download = 'Tugas-XPM.jpg';
-                    btnDownload.style.display = "inline-block";
-                    btnDownload.style.marginTop = "8px";
-                    btnDownload.style.padding = "6px 12px";
-                    btnDownload.style.backgroundColor = "#4CAF50";
-                    btnDownload.style.color = "white";
-                    btnDownload.style.textDecoration = "none";
-                    btnDownload.style.borderRadius = "4px";
-                    btnDownload.style.fontSize = "14px";
-                    
-                    itemDiv.appendChild(btnDownload);
+                    // Tombol Titik Tiga (⋮) di Pojok Kanan Atas
+                    const btnOptions = document.createElement('button');
+                    btnOptions.textContent = "⋮";
+                    btnOptions.style.position = "absolute";
+                    btnOptions.style.top = "8px";
+                    btnOptions.style.right = "8px";
+                    btnOptions.style.background = "rgba(0, 0, 0, 0.6)";
+                    btnOptions.style.color = "white";
+                    btnOptions.style.border = "none";
+                    btnOptions.style.borderRadius = "50%";
+                    btnOptions.style.width = "32px";
+                    btnOptions.style.height = "32px";
+                    btnOptions.style.fontSize = "18px";
+                    btnOptions.style.cursor = "pointer";
+                    btnOptions.style.zIndex = "5";
+                    imageWrapper.appendChild(btnOptions);
+
+                    // Menu Pop-up (Fullscreen & Download)
+                    const menuDropdown = document.createElement('div');
+                    menuDropdown.style.display = "none";
+                    menuDropdown.style.position = "absolute";
+                    menuDropdown.style.top = "45px";
+                    menuDropdown.style.right = "8px";
+                    menuDropdown.style.background = "#fff";
+                    menuDropdown.style.color = "#333";
+                    menuDropdown.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
+                    menuDropdown.style.borderRadius = "6px";
+                    menuDropdown.style.zIndex = "10";
+                    menuDropdown.style.overflow = "hidden";
+
+                    // Opsi 1: Full Screen
+                    const optionFull = document.createElement('div');
+                    optionFull.textContent = "🔍 Full Screen";
+                    optionFull.style.padding = "10px 14px";
+                    optionFull.style.cursor = "pointer";
+                    optionFull.style.fontSize = "14px";
+                    optionFull.style.borderBottom = "1px solid #eee";
+                    optionFull.addEventListener('click', () => {
+                        if (img.requestFullscreen) {
+                            img.requestFullscreen();
+                        } else if (img.webkitRequestFullscreen) {
+                            img.webkitRequestFullscreen();
+                        }
+                        menuDropdown.style.display = "none";
+                    });
+                    menuDropdown.appendChild(optionFull);
+
+                    // Opsi 2: Download Image
+                    const optionDownload = document.createElement('a');
+                    optionDownload.textContent = "📥 Download Image";
+                    optionDownload.href = tugas.gambar;
+                    optionDownload.target = "_blank";
+                    optionDownload.download = "Tugas-XPM.jpg";
+                    optionDownload.style.display = "block";
+                    optionDownload.style.padding = "10px 14px";
+                    optionDownload.style.color = "#333";
+                    optionDownload.style.textDecoration = "none";
+                    optionDownload.style.fontSize = "14px";
+                    optionDownload.addEventListener('click', () => {
+                        menuDropdown.style.display = "none";
+                    });
+                    menuDropdown.appendChild(optionDownload);
+
+                    imageWrapper.appendChild(menuDropdown);
+
+                    // Event Klik Tombol Titik Tiga untuk Buka/Tutup Menu
+                    btnOptions.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (menuDropdown.style.display === "block") {
+                            menuDropdown.style.display = "none";
+                        } else {
+                            menuDropdown.style.display = "block";
+                        }
+                    });
+
+                    // Tutup menu jika klik di luar gambar
+                    document.addEventListener('click', () => {
+                        menuDropdown.style.display = "none";
+                    });
+
+                    itemDiv.appendChild(imageWrapper);
                 }
 
                 if (isAdmin) {
