@@ -8,10 +8,21 @@
 </head>
 <body>
 
+    <!-- Tombol Menu Garis Tiga di Pojok Kiri Atas -->
+    <button id="btnMenu" class="btn-menu">☰</button>
+
+    <!-- Menu Samping (Dropdown / Drawer) -->
+    <div id="sideMenu" class="side-menu">
+        <button id="btnCloseMenu" class="btn-close">×</button>
+        <h3>Menu Pengaturan</h3>
+        <button id="btnDarkMode" class="menu-item-btn">🌙 Mode Gelap</button>
+    </div>
+    <div id="menuOverlay" class="menu-overlay"></div>
+
     <div class="container">
         <h1>📚 Tugas Kelas X-PM</h1>
         
-        <!-- Bagian Input Admin (DISEMBUNYIKAN SECARA DEFAULT) -->
+        <!-- Bagian Input Admin (Tersembunyi Default) -->
         <div id="adminSection" class="input-section" style="display: none;">
             <h3>Panel Admin Tambah Tugas</h3>
             <input type="text" id="inputMapel" placeholder="Nama Mapel (Cth: Matematika)">
