@@ -128,7 +128,7 @@ btnLoginAdmin.addEventListener('click', function() {
         adminSection.style.display = "none";
         btnLoginAdmin.textContent = "Masuk Sebagai Admin";
         alert("Keluar dari Mode Admin.");
-        muatTugasRealtime();
+        muatTugasRealtime(); // Refresh tampilan agar tombol hapus tugas hilang
     }
 });
 
@@ -140,7 +140,6 @@ btnSubmitPassword.addEventListener('click', function() {
         btnLoginAdmin.textContent = "Keluar Mode Admin";
         passwordModal.classList.remove('active');
         alert("Mode Admin Aktif!");
-        muatWhitelistWa();
         muatTugasRealtime(); // Refresh agar tombol hapus tugas muncul
     } else {
         alert("Sandi salah!");
@@ -205,7 +204,7 @@ btnSimpanWa.addEventListener('click', async () => {
     }
 });
 
-// Muat dan render daftar nomor terverifikasi beserta tombol Hapus (Unwishlist) di Panel Admin
+// Muat dan render daftar nomor terverifikasi beserta tombol Hapus (Unwishlist)
 function muatWhitelistWa() {
     onSnapshot(collection(db, "whitelistWa"), (snapshot) => {
         listNomorWa.innerHTML = "";
@@ -247,7 +246,6 @@ function muatWhitelistWa() {
             btnHapusWa.style.cursor = "pointer";
             btnHapusWa.style.fontSize = "11px";
 
-            // Fitur Unwishlist: Menghapus nomor dari Firestore
             btnHapusWa.addEventListener('click', async () => {
                 if (confirm(`Yakin ingin menghapus nomor ${dataNomor} dari daftar?`)) {
                     try {
@@ -515,5 +513,6 @@ document.addEventListener('click', () => {
     });
 });
 
-// Jalankan fungsi muat tugas saat halaman dibuka
+// Jalankan fungsi saat halaman dimuat pertama kali
 muatTugasRealtime();
+muatWhitelistWa();
