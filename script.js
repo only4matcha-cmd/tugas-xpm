@@ -22,12 +22,13 @@ const containerMapel = document.getElementById('containerMapel');
 const adminSection = document.getElementById('adminSection');
 const btnLoginAdmin = document.getElementById('btnLoginAdmin');
 
-// Elemen Menu Samping & Mode Gelap
+// Elemen Menu Samping & Pengaturan
 const btnMenu = document.getElementById('btnMenu');
 const sideMenu = document.getElementById('sideMenu');
 const btnCloseMenu = document.getElementById('btnCloseMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const btnDarkMode = document.getElementById('btnDarkMode');
+const btnNotif = document.getElementById('btnNotif');
 
 // Elemen Modal Sandi Custom
 const passwordModal = document.getElementById('passwordModal');
@@ -37,11 +38,19 @@ const btnCancelPassword = document.getElementById('btnCancelPassword');
 
 let isAdmin = false;
 adminSection.style.display = "none";
+let isFirstLoad = true; // Penanda untuk deteksi tugas baru masuk
 
-// Cek memori untuk mode gelap
+// 1. Cek memori Mode Gelap
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-theme");
     btnDarkMode.textContent = "☀️ Mode Terang";
+}
+
+// 2. Cek memori Notifikasi
+if (localStorage.getItem("notifStatus") === "enabled") {
+    btnNotif.textContent = "🔔 Notifikasi: ON";
+} else {
+    btnNotif.textContent = "🔕 Notifikasi: OFF";
 }
 
 // Interaksi Buka/Tutup Menu Samping
@@ -70,6 +79,31 @@ btnDarkMode.addEventListener('click', function() {
     } else {
         localStorage.setItem("darkMode", "disabled");
         btnDarkMode.textContent = "🌙 Mode Gelap";
+    }
+});
+
+// Toggle Notifikasi On/Off
+btnNotif.addEventListener('click', async function() {
+    let currentStatus = localStorage.getItem("notifStatus");
+    
+    if (currentStatus !== "enabled") {
+        if (!("Notification" in window)) {
+            alert("Browser kamu tidak mendukung fitur notifikasi.");
+            return;
+        }
+        
+        let permission = await Notification.requestPermission();
+        if (permission === "granted") {
+            localStorage.setItem("notifStatus", "enabled");
+            btnNotif.textContent = "🔔 Notifikasi: ON";
+            alert("Notifikasi Berhasil Diaktifkan!");
+        } else {
+            alert("Izin notifikasi ditolak oleh browser.");
+        }
+    } else {
+        localStorage.setItem("notifStatus", "disabled");
+        btnNotif.textContent = "🔕 Notifikasi: OFF";
+        alert("Notifikasi Dimatikan.");
     }
 });
 
@@ -139,6 +173,22 @@ function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
         
+        // Deteksi penambahan tugas baru untuk memunculkan notifikasi
+        if (!isFirstLoad && localStorage.getItem("notifStatus") === "enabled") {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    let dataBaru = change.doc.data();
+                    if (Notification.permission === "granted") {
+                        new Notification("📚 Tugas Baru: " + dataBaru.mapel, {
+                            body: dataBaru.teks.substring(0, 60) + "...",
+                            icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                        });
+                    }
+                }
+            });
+        }
+        isFirstLoad = false;
+
         if (snapshot.empty) {
             containerMapel.innerHTML = "<p style='text-align:center; color:#888;'>Belum ada tugas sama sekali.</p>";
             return;
