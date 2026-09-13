@@ -25,9 +25,7 @@ h1 {
 }
 
 .input-section {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: block !important;
     margin-bottom: 15px;
     background: #f1f3f5;
     padding: 12px;
@@ -36,14 +34,16 @@ h1 {
 }
 
 .input-section h3 {
-    margin: 0 0 5px 0;
+    margin: 0 0 8px 0;
     font-size: 14px;
     color: #444;
 }
 
 input, textarea {
-    width: 100%;
+    width: 100% !important;
+    display: block !important;
     padding: 10px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 14px;
@@ -65,6 +65,7 @@ button {
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    box-sizing: border-box;
 }
 
 .btn-admin {
@@ -73,6 +74,7 @@ button {
     margin-bottom: 15px;
     font-size: 12px;
     padding: 8px;
+    box-sizing: border-box;
 }
 
 .mapel-card {
@@ -88,9 +90,6 @@ button {
     color: white;
     padding: 10px 14px;
     font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     font-size: 15px;
 }
 
@@ -122,6 +121,7 @@ button {
     border-radius: 6px;
     margin-top: 6px;
     border: 1px solid #ddd;
+    display: block;
 }
 
 .hapus {
