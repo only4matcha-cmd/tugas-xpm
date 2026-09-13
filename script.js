@@ -160,48 +160,25 @@ btnCancelPassword.addEventListener('click', function() {
     passwordModal.classList.remove('active');
 });
 
-// Fungsi Meminta Izin Notifikasi & Mengambil Token dengan Service Worker Virtual
+// Fungsi Meminta Izin Notifikasi & Mengambil Token
 async function requestNotificationPermission() {
     try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-            console.log('Izin notifikasi diberikan.');
-            
-            const swCode = `
-                importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
-                importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
-                firebase.initializeApp({
-                  apiKey: "AIzaSyCmf_eSwBYbCFCAh_7gwdkDUjFLZhGHF7A",
-                  authDomain: "tugas-xpm.firebaseapp.com",
-                  projectId: "tugas-xpm",
-                  storageBucket: "tugas-xpm.firebasestorage.app",
-                  messagingSenderId: "1092797132447",
-                  appId: "1:1092797132447:web:066b764fc219dea2223caa",
-                  measurementId: "G-NBEB4F1PWW"
-                });
-                const messaging = firebase.messaging();
-            `;
-            
-            const blob = new Blob([swCode], { type: 'application/javascript' });
-            const swUrl = URL.createObjectURL(blob);
-            const registration = await navigator.serviceWorker.register(swUrl);
-            
             const token = await getToken(messaging, { 
-                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4',
-                serviceWorkerRegistration: registration
+                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4'
             });
             
             if (token) {
                 alert("TOKEN BERHASIL DIDAPATKAN:\n\n" + token);
             } else {
-                alert("Token kosong atau gagal digenerate.");
+                alert("Token kosong.");
             }
         } else {
-            alert("Izin notifikasi ditolak oleh browser.");
+            alert("Izin notifikasi ditolak.");
         }
     } catch (error) {
-        alert("Error Messaging: " + error.message);
-        console.error('Terjadi kesalahan:', error);
+        alert("Error: " + error.message);
     }
 }
 
