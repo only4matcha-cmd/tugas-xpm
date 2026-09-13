@@ -1,6 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCmf_eSwBYbCFCAh_7gwdkDUjFLZhGHF7A",
@@ -14,7 +13,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const messaging = getMessaging(app);
 
 const inputMapel = document.getElementById('inputMapel');
 const inputTugas = document.getElementById('inputTugas');
@@ -24,39 +22,40 @@ const containerMapel = document.getElementById('containerMapel');
 const adminSection = document.getElementById('adminSection');
 const btnLoginAdmin = document.getElementById('btnLoginAdmin');
 
-// Elemen Menu Samping & Pengaturan
 const btnMenu = document.getElementById('btnMenu');
 const sideMenu = document.getElementById('sideMenu');
 const btnCloseMenu = document.getElementById('btnCloseMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const btnDarkMode = document.getElementById('btnDarkMode');
 const btnChangePassword = document.getElementById('btnChangePassword');
+const btnWaReminder = document.getElementById('btnWaReminder');
 
-// Elemen Modal Sandi Admin
 const passwordModal = document.getElementById('passwordModal');
 const inputPassword = document.getElementById('inputPassword');
 const btnSubmitPassword = document.getElementById('btnSubmitPassword');
 const btnCancelPassword = document.getElementById('btnCancelPassword');
 
-// Elemen Modal Ubah Sandi Baru
 const changePasswordModal = document.getElementById('changePasswordModal');
 const inputOldPassword = document.getElementById('inputOldPassword');
 const inputNewPassword = document.getElementById('inputNewPassword');
 const btnSubmitNewPassword = document.getElementById('btnSubmitNewPassword');
 const btnCancelChangePassword = document.getElementById('btnCancelChangePassword');
 
+const waModal = document.getElementById('waModal');
+const inputWaNumber = document.getElementById('inputWaNumber');
+const btnSubmitWa = document.getElementById('btnSubmitWa');
+const btnCancelWa = document.getElementById('btnCancelWa');
+
 let isAdmin = false;
 adminSection.style.display = "none";
 
 let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
 
-// Cek memori Mode Gelap
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-theme");
     btnDarkMode.textContent = "☀️ Mode Terang";
 }
 
-// Interaksi Buka/Tutup Menu Samping
 btnMenu.addEventListener('click', () => {
     sideMenu.classList.add('open');
     menuOverlay.classList.add('active');
@@ -72,7 +71,6 @@ menuOverlay.addEventListener('click', () => {
     menuOverlay.classList.remove('active');
 });
 
-// Toggle Mode Gelap
 btnDarkMode.addEventListener('click', function() {
     document.body.classList.toggle("dark-theme");
     
@@ -85,7 +83,32 @@ btnDarkMode.addEventListener('click', function() {
     }
 });
 
-// Logika Buka Modal Ubah Sandi
+// Fitur WhatsApp Reminder
+btnWaReminder.addEventListener('click', () => {
+    sideMenu.classList.remove('open');
+    menuOverlay.classList.remove('active');
+    
+    let savedWa = localStorage.getItem("studentWaNumber") || "";
+    inputWaNumber.value = savedWa;
+    waModal.classList.add('active');
+    inputWaNumber.focus();
+});
+
+btnSubmitWa.addEventListener('click', () => {
+    let nomor = inputWaNumber.value.trim();
+    if (nomor !== "") {
+        localStorage.setItem("studentWaNumber", nomor);
+        alert("Nomor WhatsApp berhasil disimpan!");
+        waModal.classList.remove('active');
+    } else {
+        alert("Nomor tidak boleh kosong!");
+    }
+});
+
+btnCancelWa.addEventListener('click', () => {
+    waModal.classList.remove('active');
+});
+
 btnChangePassword.addEventListener('click', () => {
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
@@ -96,7 +119,6 @@ btnChangePassword.addEventListener('click', () => {
     inputOldPassword.focus();
 });
 
-// Logika Proses Simpan Sandi Baru
 btnSubmitNewPassword.addEventListener('click', () => {
     let oldPass = inputOldPassword.value;
     let newPass = inputNewPassword.value;
@@ -122,7 +144,6 @@ btnCancelChangePassword.addEventListener('click', () => {
     changePasswordModal.classList.remove('active');
 });
 
-// Logika Admin dengan Modal Custom
 btnLoginAdmin.addEventListener('click', function() {
     if (!isAdmin) {
         inputPassword.value = "";
@@ -146,9 +167,6 @@ btnSubmitPassword.addEventListener('click', function() {
         passwordModal.classList.remove('active');
         alert("Mode Admin Aktif!");
         muatTugasRealtime();
-        
-        // Panggil fungsi permintaan izin & ambil token FCM
-        requestNotificationPermission();
     } else {
         alert("Sandi salah!");
         inputPassword.value = "";
@@ -158,39 +176,6 @@ btnSubmitPassword.addEventListener('click', function() {
 
 btnCancelPassword.addEventListener('click', function() {
     passwordModal.classList.remove('active');
-});
-
-// Fungsi Meminta Izin Notifikasi & Mengambil Token
-async function requestNotificationPermission() {
-    try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            console.log('Izin notifikasi diberikan.');
-            
-            const token = await getToken(messaging, { 
-                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4'
-            }).catch(err => {
-                console.error("Gagal getToken:", err);
-                return null;
-            });
-            
-            if (token) {
-                prompt("TOKEN FCM BERHASIL DIDAPATKAN! Salin teks di bawah ini:", token);
-            } else {
-                alert("Token gagal dibuat. Kemungkinan besar browser HP kamu (Chrome Mobile di GitHub Pages) memblokir Service Worker FCM tanpa domain HTTPS utama.");
-            }
-        } else {
-            alert("Izin notifikasi ditolak oleh browser.");
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Error Messaging: " + error.message);
-    }
-}
-
-// Menangkap Pesan Saat Aplikasi Terbuka (Foreground)
-onMessage(messaging, (payload) => {
-    alert(`Notifikasi Baru: ${payload.notification.title} - ${payload.notification.body}`);
 });
 
 btnTambah.addEventListener('click', async function() {
@@ -210,17 +195,29 @@ btnTambah.addEventListener('click', async function() {
             gambar: gambar,
             waktu: Date.now()
         });
+        
         inputMapel.value = "";
         inputTugas.value = "";
         inputGambar.value = "";
         alert("Tugas berhasil ditambahkan!");
+
+        // Otomatis tawarkan kirim WA jika nomor tersimpan di perangkat admin
+        let savedWa = localStorage.getItem("studentWaNumber");
+        if (savedWa) {
+            let kirimWa = confirm("Tugas berhasil diposting! Ingin mengirim pengingat ke WhatsApp?");
+            if (kirimWa) {
+                let pesan = `📢 *TUGAS BARU - ${mapel.toUpperCase()}*\n\n${teks}`;
+                let urlWa = `https://wa.me/${savedWa}?text=${encodeURIComponent(pesan)}`;
+                window.open(urlWa, '_blank');
+            }
+        }
+
     } catch (error) {
         console.error("Gagal menambah tugas: ", error);
         alert("Terjadi kesalahan saat menyimpan.");
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Header Mapel Slim & Menu Dropdown Keren
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
