@@ -29,6 +29,12 @@ const btnCloseMenu = document.getElementById('btnCloseMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const btnDarkMode = document.getElementById('btnDarkMode');
 
+// Elemen Modal Sandi Custom
+const passwordModal = document.getElementById('passwordModal');
+const inputPassword = document.getElementById('inputPassword');
+const btnSubmitPassword = document.getElementById('btnSubmitPassword');
+const btnCancelPassword = document.getElementById('btnCancelPassword');
+
 let isAdmin = false;
 adminSection.style.display = "none";
 
@@ -67,18 +73,12 @@ btnDarkMode.addEventListener('click', function() {
     }
 });
 
+// Logika Admin dengan Modal Custom
 btnLoginAdmin.addEventListener('click', function() {
     if (!isAdmin) {
-        let sandi = prompt("Masukkan sandi admin:");
-        if (sandi === "xpm123") {
-            isAdmin = true;
-            adminSection.style.display = "block";
-            btnLoginAdmin.textContent = "Keluar Mode Admin";
-            alert("Mode Admin Aktif!");
-            muatTugasRealtime();
-        } else if (sandi !== null) {
-            alert("Sandi salah!");
-        }
+        inputPassword.value = "";
+        passwordModal.classList.add('active');
+        inputPassword.focus();
     } else {
         isAdmin = false;
         adminSection.style.display = "none";
@@ -86,6 +86,26 @@ btnLoginAdmin.addEventListener('click', function() {
         alert("Keluar dari Mode Admin.");
         muatTugasRealtime();
     }
+});
+
+btnSubmitPassword.addEventListener('click', function() {
+    let sandi = inputPassword.value;
+    if (sandi === "xpm123") {
+        isAdmin = true;
+        adminSection.style.display = "block";
+        btnLoginAdmin.textContent = "Keluar Mode Admin";
+        passwordModal.classList.remove('active');
+        alert("Mode Admin Aktif!");
+        muatTugasRealtime();
+    } else {
+        alert("Sandi salah!");
+        inputPassword.value = "";
+        inputPassword.focus();
+    }
+});
+
+btnCancelPassword.addEventListener('click', function() {
+    passwordModal.classList.remove('active');
 });
 
 btnTambah.addEventListener('click', async function() {
