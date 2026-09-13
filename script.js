@@ -1,6 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-// Tambahan modul Messaging untuk Notifikasi
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
 const firebaseConfig = {
@@ -15,7 +14,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const messaging = getMessaging(app); // Inisialisasi Messaging
+const messaging = getMessaging(app);
 
 const inputMapel = document.getElementById('inputMapel');
 const inputTugas = document.getElementById('inputTugas');
@@ -148,7 +147,7 @@ btnSubmitPassword.addEventListener('click', function() {
         alert("Mode Admin Aktif!");
         muatTugasRealtime();
         
-        // Panggil fungsi izin notifikasi & ambil token saat masuk mode admin
+        // Panggil fungsi permintaan izin & ambil token
         requestNotificationPermission();
     } else {
         alert("Sandi salah!");
@@ -161,21 +160,32 @@ btnCancelPassword.addEventListener('click', function() {
     passwordModal.classList.remove('active');
 });
 
-// Fungsi Meminta Izin Notifikasi & Menampilkan Token untuk Uji Coba di HP
+// Fungsi Meminta Izin Notifikasi & Mengambil Token
 async function requestNotificationPermission() {
     try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
+            console.log('Izin notifikasi diberikan.');
+            
+            // Daftarkan service worker secara eksplisit
+            const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            
             const token = await getToken(messaging, { 
-                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4' 
+                vapidKey: 'BIgsyrE3a6TY5Ejjdgs3XrKxt5604tpN_AIZOVgHZDMXwsgCzV-_RyJV0LhwqhgBlQwmmmp6YbiB9GdbB3LsIb4',
+                serviceWorkerRegistration: registration
             });
+            
             if (token) {
-                // Token akan muncul di pop-up HP supaya bisa disalin untuk uji coba Firebase Console
-                alert("Token FCM Berhasil Didapatkan! Salin token ini di Firebase Console:\n\n" + token);
+                alert("TOKEN BERHASIL DIDAPATKAN:\n\n" + token);
+            } else {
+                alert("Token kosong atau gagal digenerate.");
             }
+        } else {
+            alert("Izin notifikasi ditolak oleh browser.");
         }
     } catch (error) {
-        console.error("Gagal mendapatkan izin notifikasi: ", error);
+        alert("Error Messaging: " + error.message);
+        console.error('Terjadi kesalahan:', error);
     }
 }
 
