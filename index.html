@@ -14,30 +14,41 @@
     <!-- Tombol Menu Samping (Garis Tiga) -->
     <button id="btnMenu" class="btn-menu">☰</button>
 
-    <!-- Menu Samping (Sidebar) dengan Kategori -->
+    <!-- Menu Samping (Sidebar) dengan Sistem Tab Kategori -->
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
-            <span>⚙️ Menu Pengaturan</span>
+            <span id="sidebarTitle">⚙️ Menu Pengaturan</span>
             <button id="btnCloseMenu" class="btn-close">×</button>
         </div>
-        <div class="side-menu-body" style="padding: 15px; display: flex; flex-direction: column; gap: 15px;">
+        
+        <div class="side-menu-body" style="padding: 15px; display: flex; flex-direction: column; gap: 12px;">
             
-            <!-- Kategori 1: General -->
-            <div>
-                <div style="font-size: 12px; color: #888; font-weight: bold; margin-bottom: 6px; text-transform: uppercase;">General</div>
-                <button id="btnDarkMode" class="menu-btn" style="width: 100%; margin-bottom: 0;">🌙 Mode Gelap</button>
+            <!-- TAMPILAN UTAMA: 3 Tombol Kategori Sejajar -->
+            <div id="menuMainCategories" style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="tabGeneral" class="menu-btn" style="width: 100%; text-align: left; font-weight: bold;">📁 General</button>
+                <button id="tabNotifikasi" class="menu-btn" style="width: 100%; text-align: left; font-weight: bold;">🔔 Notifikasi</button>
+                <button id="tabKeamanan" class="menu-btn" style="width: 100%; text-align: left; font-weight: bold;">🔒 Keamanan</button>
             </div>
 
-            <!-- Kategori 2: Keamanan -->
-            <div>
-                <div style="font-size: 12px; color: #888; font-weight: bold; margin-bottom: 6px; text-transform: uppercase;">Keamanan</div>
-                <button id="btnChangePassword" class="menu-btn" style="width: 100%; margin-bottom: 0;">🔑 Ubah Sandi Admin</button>
+            <!-- ISI KATEGORI GENERAL -->
+            <div id="contentGeneral" style="display: none; flex-direction: column; gap: 10px;">
+                <button id="btnBackFromGeneral" style="background: transparent; border: none; color: #aaa; cursor: pointer; text-align: left; font-size: 13px; margin-bottom: 5px;">← Kembali ke Menu</button>
+                <div style="font-size: 12px; color: #888; font-weight: bold; text-transform: uppercase;">Pengaturan General</div>
+                <button id="btnDarkMode" class="menu-btn" style="width: 100%;">🌙 Mode Gelap</button>
             </div>
 
-            <!-- Kategori 3: Notifikasi -->
-            <div>
-                <div style="font-size: 12px; color: #888; font-weight: bold; margin-bottom: 6px; text-transform: uppercase;">Notifikasi</div>
-                <button id="btnVerifyWa" class="menu-btn" style="width: 100%; margin-bottom: 0;">📱 Verifikasi Nomor WA</button>
+            <!-- ISI KATEGORI NOTIFIKASI -->
+            <div id="contentNotifikasi" style="display: none; flex-direction: column; gap: 10px;">
+                <button id="btnBackFromNotifikasi" style="background: transparent; border: none; color: #aaa; cursor: pointer; text-align: left; font-size: 13px; margin-bottom: 5px;">← Kembali ke Menu</button>
+                <div style="font-size: 12px; color: #888; font-weight: bold; text-transform: uppercase;">Pengaturan Notifikasi</div>
+                <button id="btnVerifyWa" class="menu-btn" style="width: 100%;">📱 Verifikasi Nomor WA</button>
+            </div>
+
+            <!-- ISI KATEGORI KEAMANAN -->
+            <div id="contentKeamanan" style="display: none; flex-direction: column; gap: 10px;">
+                <button id="btnBackFromKeamanan" style="background: transparent; border: none; color: #aaa; cursor: pointer; text-align: left; font-size: 13px; margin-bottom: 5px;">← Kembali ke Menu</button>
+                <div style="font-size: 12px; color: #888; font-weight: bold; text-transform: uppercase;">Pengaturan Keamanan</div>
+                <button id="btnChangePassword" class="menu-btn" style="width: 100%;">🔑 Ubah Sandi Admin</button>
             </div>
 
         </div>
