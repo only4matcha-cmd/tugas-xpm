@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papan Tugas Kelas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>📚 Tugas Kelas X-PM</h1>
+        
+        <!-- Bagian Input (Disembunyikan otomatis, nanti muncul kalau pakai kode sandi) -->
+        <div id="adminSection" class="input-section" style="display: none;">
+            <input type="text" id="inputTugas" placeholder="Tulis tugas baru...">
+            <button id="btnTambah">Tambah</button>
+        </div>
+
+        <!-- Tombol Login Admin Rahasia -->
+        <button id="btnLoginAdmin" class="btn-admin">Masuk Sebagai Admin</button>
+
+        <!-- Daftar Tugas Online -->
+        <ul id="listTugas">
+            <p id="loadingText">Memuat tugas dari server...</p>
+        </ul>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+
