@@ -2,14 +2,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore, collection, addDoc, getDocs, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
-// Konfigurasi Firebase
+// Konfigurasi Firebase Resmi Sesuai Project Kamu
 const firebaseConfig = {
-    apiKey: "AIzaSyCnf_e5WBYbCFCAh_7gwdkDU",
+    apiKey: "AIzaSyCmf_eSwBYbCFCAh_7gwdkDUjFLZhGHF7A",
     authDomain: "tugas-xpm.firebaseapp.com",
     projectId: "tugas-xpm",
-    storageBucket: "tugas-xpm.appspot.com",
+    storageBucket: "tugas-xpm.firebasestorage.app",
     messagingSenderId: "1092797132447",
-    appId: "1:1092797132447:web:O66b764fc219dea2223caa"
+    appId: "1:1092797132447:web:066b764fc219dea2223caa",
+    measurementId: "G-NBEB4F1PWW"
 };
 
 // Inisialisasi Firebase
@@ -176,6 +177,8 @@ async function requestNotificationPermission() {
             
             if (token) {
                 console.log('FCM Token Perangkat:', token);
+                // Menampilkan token lewat alert agar mudah disalin di HP
+                alert('Token HP (Salin ini untuk uji coba):\n\n' + token);
             } else {
                 console.log('Gagal mendapatkan token FCM.');
             }
