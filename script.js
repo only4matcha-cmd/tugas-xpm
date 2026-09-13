@@ -24,6 +24,9 @@ const btnLoginAdmin = document.getElementById('btnLoginAdmin');
 
 let isAdmin = false;
 
+// Pastikan panel admin tertutup saat pertama kali web dibuka
+adminSection.style.display = "none";
+
 btnLoginAdmin.addEventListener('click', function() {
     if (!isAdmin) {
         let sandi = prompt("Masukkan sandi admin:");
