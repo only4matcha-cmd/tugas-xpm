@@ -28,7 +28,6 @@ const sideMenu = document.getElementById('sideMenu');
 const btnCloseMenu = document.getElementById('btnCloseMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const btnDarkMode = document.getElementById('btnDarkMode');
-const btnNotif = document.getElementById('btnNotif');
 
 // Elemen Modal Sandi Custom
 const passwordModal = document.getElementById('passwordModal');
@@ -38,20 +37,11 @@ const btnCancelPassword = document.getElementById('btnCancelPassword');
 
 let isAdmin = false;
 adminSection.style.display = "none";
-let initialLoadDone = false; // Penanda agar data awal tidak keliru memicu masalah render
 
-// 1. Cek memori Mode Gelap
+// Cek memori Mode Gelap
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-theme");
     btnDarkMode.textContent = "☀️ Mode Terang";
-}
-
-// 2. Cek memori Notifikasi saat halaman dimuat
-if (localStorage.getItem("notifStatus") === "enabled" && ("Notification" in window) && Notification.permission === "granted") {
-    btnNotif.textContent = "🔔 Notifikasi: ON";
-} else {
-    localStorage.setItem("notifStatus", "disabled");
-    btnNotif.textContent = "🔕 Notifikasi: OFF";
 }
 
 // Interaksi Buka/Tutup Menu Samping
@@ -80,40 +70,6 @@ btnDarkMode.addEventListener('click', function() {
     } else {
         localStorage.setItem("darkMode", "disabled");
         btnDarkMode.textContent = "🌙 Mode Gelap";
-    }
-});
-
-// Toggle Notifikasi On/Off yang Akurat
-btnNotif.addEventListener('click', async function() {
-    if (!("Notification" in window)) {
-        alert("Browser kamu tidak mendukung fitur notifikasi.");
-        return;
-    }
-
-    let currentPermission = Notification.permission;
-
-    if (currentPermission === "granted") {
-        let currentStatus = localStorage.getItem("notifStatus");
-        if (currentStatus === "enabled") {
-            localStorage.setItem("notifStatus", "disabled");
-            btnNotif.textContent = "🔕 Notifikasi: OFF";
-            alert("Notifikasi Dimatikan.");
-        } else {
-            localStorage.setItem("notifStatus", "enabled");
-            btnNotif.textContent = "🔔 Notifikasi: ON";
-            alert("Notifikasi Diaktifkan!");
-        }
-    } else {
-        let permission = await Notification.requestPermission();
-        if (permission === "granted") {
-            localStorage.setItem("notifStatus", "enabled");
-            btnNotif.textContent = "🔔 Notifikasi: ON";
-            alert("Izin diberikan! Notifikasi Berhasil Aktif.");
-        } else {
-            localStorage.setItem("notifStatus", "disabled");
-            btnNotif.textContent = "🔕 Notifikasi: OFF";
-            alert("Izin notifikasi ditolak oleh browser. Coba cek pengaturan situs di ikon gembok/pengaturan samping URL browser.");
-        }
     }
 });
 
@@ -179,26 +135,10 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime (Diletakkan di bagian paling bawah)
+// Fungsi Pemuatan Tugas Realtime yang Bersih & Stabil
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
-        // Deteksi penambahan tugas baru untuk notifikasi (Hanya setelah pemuatan awal selesai)
-        if (initialLoadDone && localStorage.getItem("notifStatus") === "enabled") {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === "added") {
-                    let dataBaru = change.doc.data();
-                    if (Notification.permission === "granted") {
-                        new Notification("📚 Tugas Baru: " + dataBaru.mapel, {
-                            body: dataBaru.teks.substring(0, 60) + "...",
-                            icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                        });
-                    }
-                }
-            });
-        }
-        initialLoadDone = true;
-
-        containerMapel.innerHTML = ""; // Dikosongkan dengan aman setelah pengecekan
+        containerMapel.innerHTML = "";
 
         if (snapshot.empty) {
             containerMapel.innerHTML = "<p style='text-align:center; color:#888;'>Belum ada tugas sama sekali.</p>";
