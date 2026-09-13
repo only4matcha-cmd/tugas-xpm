@@ -46,10 +46,11 @@ if (localStorage.getItem("darkMode") === "enabled") {
     btnDarkMode.textContent = "☀️ Mode Terang";
 }
 
-// 2. Cek memori Notifikasi
-if (localStorage.getItem("notifStatus") === "enabled") {
+// 2. Cek memori Notifikasi saat halaman dimuat
+if (localStorage.getItem("notifStatus") === "enabled" && ("Notification" in window) && Notification.permission === "granted") {
     btnNotif.textContent = "🔔 Notifikasi: ON";
 } else {
+    localStorage.setItem("notifStatus", "disabled");
     btnNotif.textContent = "🔕 Notifikasi: OFF";
 }
 
@@ -82,28 +83,37 @@ btnDarkMode.addEventListener('click', function() {
     }
 });
 
-// Toggle Notifikasi On/Off
+// Toggle Notifikasi On/Off yang Akurat
 btnNotif.addEventListener('click', async function() {
-    let currentStatus = localStorage.getItem("notifStatus");
-    
-    if (currentStatus !== "enabled") {
-        if (!("Notification" in window)) {
-            alert("Browser kamu tidak mendukung fitur notifikasi.");
-            return;
+    if (!("Notification" in window)) {
+        alert("Browser kamu tidak mendukung fitur notifikasi.");
+        return;
+    }
+
+    let currentPermission = Notification.permission;
+
+    if (currentPermission === "granted") {
+        let currentStatus = localStorage.getItem("notifStatus");
+        if (currentStatus === "enabled") {
+            localStorage.setItem("notifStatus", "disabled");
+            btnNotif.textContent = "🔕 Notifikasi: OFF";
+            alert("Notifikasi Dimatikan.");
+        } else {
+            localStorage.setItem("notifStatus", "enabled");
+            btnNotif.textContent = "🔔 Notifikasi: ON";
+            alert("Notifikasi Diaktifkan!");
         }
-        
+    } else {
         let permission = await Notification.requestPermission();
         if (permission === "granted") {
             localStorage.setItem("notifStatus", "enabled");
             btnNotif.textContent = "🔔 Notifikasi: ON";
-            alert("Notifikasi Berhasil Diaktifkan!");
+            alert("Izin diberikan! Notifikasi Berhasil Aktif.");
         } else {
-            alert("Izin notifikasi ditolak oleh browser.");
+            localStorage.setItem("notifStatus", "disabled");
+            btnNotif.textContent = "🔕 Notifikasi: OFF";
+            alert("Izin notifikasi ditolak oleh browser. Coba cek pengaturan situs di ikon gembok/pengaturan samping URL browser.");
         }
-    } else {
-        localStorage.setItem("notifStatus", "disabled");
-        btnNotif.textContent = "🔕 Notifikasi: OFF";
-        alert("Notifikasi Dimatikan.");
     }
 });
 
