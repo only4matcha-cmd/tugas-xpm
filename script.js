@@ -55,7 +55,7 @@ let isAdmin = false;
 adminSection.style.display = "none";
 
 let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
-const NOMOR_ADMIN_WA = "6287745656583"; // <-- Ganti dengan nomor WhatsApp-mu
+const NOMOR_ADMIN_WA = "6281234567890"; // <-- Ganti dengan nomor WhatsApp aslimu
 
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-theme");
@@ -128,6 +128,7 @@ btnLoginAdmin.addEventListener('click', function() {
         adminSection.style.display = "none";
         btnLoginAdmin.textContent = "Masuk Sebagai Admin";
         alert("Keluar dari Mode Admin.");
+        muatTugasRealtime();
     }
 });
 
@@ -140,6 +141,7 @@ btnSubmitPassword.addEventListener('click', function() {
         passwordModal.classList.remove('active');
         alert("Mode Admin Aktif!");
         muatWhitelistWa();
+        muatTugasRealtime(); // Refresh agar tombol hapus tugas muncul
     } else {
         alert("Sandi salah!");
         inputPassword.value = "";
@@ -203,18 +205,64 @@ btnSimpanWa.addEventListener('click', async () => {
     }
 });
 
-// Muat daftar nomor terverifikasi di Panel Admin
+// Muat dan render daftar nomor terverifikasi beserta tombol Hapus (Unwishlist) di Panel Admin
 function muatWhitelistWa() {
     onSnapshot(collection(db, "whitelistWa"), (snapshot) => {
+        listNomorWa.innerHTML = "";
+        
         if (snapshot.empty) {
             listNomorWa.textContent = "Belum ada nomor terverifikasi.";
             return;
         }
-        let listArr = [];
+
+        const titleP = document.createElement('div');
+        titleP.innerHTML = "<b>Daftar Tersimpan:</b>";
+        titleP.style.marginBottom = "5px";
+        listNomorWa.appendChild(titleP);
+
         snapshot.forEach((docItem) => {
-            listArr.push(docItem.data().nomor);
+            let dataNomor = docItem.data().nomor;
+            let docId = docItem.id;
+
+            const rowDiv = document.createElement('div');
+            rowDiv.style.display = "flex";
+            rowDiv.style.alignItems = "center";
+            rowDiv.style.justifyContent = "space-between";
+            rowDiv.style.background = "#222";
+            rowDiv.style.padding = "6px 10px";
+            rowDiv.style.borderRadius = "4px";
+            rowDiv.style.marginBottom = "4px";
+
+            const spanNum = document.createElement('span');
+            spanNum.textContent = dataNomor;
+            rowDiv.appendChild(spanNum);
+
+            const btnHapusWa = document.createElement('button');
+            btnHapusWa.textContent = "Hapus";
+            btnHapusWa.style.backgroundColor = "#d32f2f";
+            btnHapusWa.style.color = "white";
+            btnHapusWa.style.border = "none";
+            btnHapusWa.style.padding = "2px 8px";
+            btnHapusWa.style.borderRadius = "3px";
+            btnHapusWa.style.cursor = "pointer";
+            btnHapusWa.style.fontSize = "11px";
+
+            // Fitur Unwishlist: Menghapus nomor dari Firestore
+            btnHapusWa.addEventListener('click', async () => {
+                if (confirm(`Yakin ingin menghapus nomor ${dataNomor} dari daftar?`)) {
+                    try {
+                        await deleteDoc(doc(db, "whitelistWa", docId));
+                        alert("Nomor berhasil dihapus dari daftar terverifikasi!");
+                    } catch (error) {
+                        console.error("Gagal menghapus nomor:", error);
+                        alert("Terjadi kesalahan saat menghapus.");
+                    }
+                }
+            });
+
+            rowDiv.appendChild(btnHapusWa);
+            listNomorWa.appendChild(rowDiv);
         });
-        listNomorWa.textContent = "Tersimpan: " + listArr.join(", ");
     });
 }
 
@@ -435,6 +483,14 @@ function muatTugasRealtime() {
                     const btnHapus = document.createElement('button');
                     btnHapus.textContent = 'Hapus Tugas Ini';
                     btnHapus.classList.add('hapus');
+                    btnHapus.style.marginTop = "10px";
+                    btnHapus.style.backgroundColor = "#d32f2f";
+                    btnHapus.style.color = "white";
+                    btnHapus.style.border = "none";
+                    btnHapus.style.padding = "6px 12px";
+                    btnHapus.style.borderRadius = "4px";
+                    btnHapus.style.cursor = "pointer";
+
                     btnHapus.addEventListener('click', async function() {
                         if (confirm("Yakin ingin menghapus tugas ini?")) {
                             await deleteDoc(doc(db, "tugasKelas", tugas.id));
