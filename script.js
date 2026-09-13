@@ -28,18 +28,24 @@ const sideMenu = document.getElementById('sideMenu');
 const btnCloseMenu = document.getElementById('btnCloseMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const btnDarkMode = document.getElementById('btnDarkMode');
-const btnChangePassword = document.getElementById('btnChangePassword'); // Tombol Ubah Sandi Baru
+const btnChangePassword = document.getElementById('btnChangePassword');
 
-// Elemen Modal Sandi Custom
+// Elemen Modal Sandi Admin
 const passwordModal = document.getElementById('passwordModal');
 const inputPassword = document.getElementById('inputPassword');
 const btnSubmitPassword = document.getElementById('btnSubmitPassword');
 const btnCancelPassword = document.getElementById('btnCancelPassword');
 
+// Elemen Modal Ubah Sandi Baru
+const changePasswordModal = document.getElementById('changePasswordModal');
+const inputOldPassword = document.getElementById('inputOldPassword');
+const inputNewPassword = document.getElementById('inputNewPassword');
+const btnSubmitNewPassword = document.getElementById('btnSubmitNewPassword');
+const btnCancelChangePassword = document.getElementById('btnCancelChangePassword');
+
 let isAdmin = false;
 adminSection.style.display = "none";
 
-// Ambil sandi admin dari localStorage, jika belum ada gunakan default "xpm123"
 let currentAdminPassword = localStorage.getItem("adminPassword") || "xpm123";
 
 // Cek memori Mode Gelap
@@ -77,27 +83,41 @@ btnDarkMode.addEventListener('click', function() {
     }
 });
 
-// Fitur Ubah Sandi Admin dari Menu Samping
+// Logika Buka Modal Ubah Sandi
 btnChangePassword.addEventListener('click', () => {
-    // Tutup menu samping dulu
     sideMenu.classList.remove('open');
     menuOverlay.classList.remove('active');
+    
+    inputOldPassword.value = "";
+    inputNewPassword.value = "";
+    changePasswordModal.classList.add('active');
+    inputOldPassword.focus();
+});
 
-    let oldPass = prompt("Masukkan Sandi Admin saat ini:");
-    if (oldPass === null) return; // Jika dibatalkan
+// Logika Proses Simpan Sandi Baru
+btnSubmitNewPassword.addEventListener('click', () => {
+    let oldPass = inputOldPassword.value;
+    let newPass = inputNewPassword.value;
 
     if (oldPass === currentAdminPassword) {
-        let newPass = prompt("Masukkan Sandi Admin yang BARU:");
         if (newPass && newPass.trim() !== "") {
             currentAdminPassword = newPass.trim();
             localStorage.setItem("adminPassword", currentAdminPassword);
-            alert("Sandi admin berhasil diubah! Gunakan sandi baru untuk masuk berikutnya.");
+            alert("Sandi admin berhasil diubah!");
+            changePasswordModal.classList.remove('active');
         } else {
             alert("Sandi baru tidak boleh kosong!");
+            inputNewPassword.focus();
         }
     } else {
-        alert("Sandi lama salah! Gagal mengubah sandi.");
+        alert("Sandi lama salah!");
+        inputOldPassword.value = "";
+        inputOldPassword.focus();
     }
+});
+
+btnCancelChangePassword.addEventListener('click', () => {
+    changePasswordModal.classList.remove('active');
 });
 
 // Logika Admin dengan Modal Custom
@@ -162,7 +182,7 @@ btnTambah.addEventListener('click', async function() {
     }
 });
 
-// Fungsi Pemuatan Tugas Realtime + Header Mapel Slim & Ringkas
+// Fungsi Pemuatan Tugas Realtime + Header Mapel Slim & Menu Dropdown Keren
 function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
@@ -188,7 +208,6 @@ function muatTugasRealtime() {
             const card = document.createElement('div');
             card.classList.add('mapel-card');
 
-            // Header Mapel Dibuat Tipis (Padding 5px 12px)
             const header = document.createElement('div');
             header.classList.add('mapel-header');
             header.style.display = "flex";
@@ -360,7 +379,6 @@ function muatTugasRealtime() {
     });
 }
 
-// Tutup semua menu dropdown jika area luar diklik
 document.addEventListener('click', () => {
     document.querySelectorAll('.mapel-menu-dropdown-popup').forEach(m => {
         m.style.display = "none";
