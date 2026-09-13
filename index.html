@@ -14,41 +14,35 @@
     <!-- Tombol Menu Samping (Garis Tiga) -->
     <button id="btnMenu" class="btn-menu">☰</button>
 
-    <!-- Menu Samping (Sidebar) dengan Sistem Tab Kategori Horizontal Ramping -->
+    <!-- Menu Samping (Sidebar) dengan Tab Menu Ramping & Default General -->
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
             <span id="sidebarTitle">⚙️ Menu Pengaturan</span>
             <button id="btnCloseMenu" class="btn-close">×</button>
         </div>
         
-        <div class="side-menu-body" style="padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+        <div class="side-menu-body" style="padding: 10px; display: flex; flex-direction: column; gap: 8px;">
             
-            <!-- TAMPILAN UTAMA: 3 Tombol Sejajar Menyamping & Ramping -->
-            <div id="menuMainCategories" style="display: flex; flex-direction: row; gap: 6px; justify-content: space-between;">
-                <button id="tabGeneral" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: bold; background: #333; color: #fff; border: 1px solid #555; border-radius: 6px; cursor: pointer; text-align: center;">📁 General</button>
-                <button id="tabNotifikasi" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: bold; background: #333; color: #fff; border: 1px solid #555; border-radius: 6px; cursor: pointer; text-align: center;">🔔 Notifikasi</button>
-                <button id="tabKeamanan" style="flex: 1; padding: 8px 4px; font-size: 11px; font-weight: bold; background: #333; color: #fff; border: 1px solid #555; border-radius: 6px; cursor: pointer; text-align: center;">🔒 Keamanan</button>
+            <!-- Tab Menu Sejajar Menyamping (Tanpa Box Bar) -->
+            <div style="display: flex; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 5px;">
+                <button id="tabGeneral" style="flex: 1; background: transparent; border: none; color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; padding: 4px; border-bottom: 2px solid #7E57C2;">General</button>
+                <button id="tabNotifikasi" style="flex: 1; background: transparent; border: none; color: #888; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; padding: 4px;">Notifikasi</button>
+                <button id="tabKeamanan" style="flex: 1; background: transparent; border: none; color: #888; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; padding: 4px;">Keamanan</button>
             </div>
 
-            <!-- ISI KATEGORI GENERAL -->
-            <div id="contentGeneral" style="display: none; flex-direction: column; gap: 10px;">
-                <button id="btnBackFromGeneral" style="background: transparent; border: none; color: #aaa; cursor: pointer; text-align: left; font-size: 13px; margin-bottom: 5px;">← Kembali ke Menu</button>
-                <div style="font-size: 12px; color: #888; font-weight: bold; text-transform: uppercase;">Pengaturan General</div>
-                <button id="btnDarkMode" class="menu-btn" style="width: 100%;">🌙 Mode Gelap</button>
+            <!-- KONTEN TAB GENERAL (Muncul Pertama Kali secara Default) -->
+            <div id="contentGeneral" style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="btnDarkMode" class="menu-btn" style="margin-bottom: 0;">🌙 Mode Gelap</button>
             </div>
 
-            <!-- ISI KATEGORI NOTIFIKASI -->
-            <div id="contentNotifikasi" style="display: none; flex-direction: column; gap: 10px;">
-                <button id="btnBackFromNotifikasi" style="background: transparent; border: none; color: #aaa; cursor: pointer; text-align: left; font-size: 13px; margin-bottom: 5px;">← Kembali ke Menu</button>
-                <div style="font-size: 12px; color: #888; font-weight: bold; text-transform: uppercase;">Pengaturan Notifikasi</div>
-                <button id="btnVerifyWa" class="menu-btn" style="width: 100%;">📱 Verifikasi Nomor WA</button>
+            <!-- KONTEN TAB NOTIFIKASI -->
+            <div id="contentNotifikasi" style="display: none; flex-direction: column; gap: 8px;">
+                <button id="btnVerifyWa" class="menu-btn" style="margin-bottom: 0;">📱 Verifikasi Nomor WA</button>
             </div>
 
-            <!-- ISI KATEGORI KEAMANAN -->
-            <div id="contentKeamanan" style="display: none; flex-direction: column; gap: 10px;">
-                <button id="btnBackFromKeamanan" style="background: transparent; border: none; color: #aaa; cursor: pointer; text-align: left; font-size: 13px; margin-bottom: 5px;">← Kembali ke Menu</button>
-                <div style="font-size: 12px; color: #888; font-weight: bold; text-transform: uppercase;">Pengaturan Keamanan</div>
-                <button id="btnChangePassword" class="menu-btn" style="width: 100%;">🔑 Ubah Sandi Admin</button>
+            <!-- KONTEN TAB KEAMANAN -->
+            <div id="contentKeamanan" style="display: none; flex-direction: column; gap: 8px;">
+                <button id="btnChangePassword" class="menu-btn" style="margin-bottom: 0;">🔑 Ubah Sandi Admin</button>
             </div>
 
         </div>
