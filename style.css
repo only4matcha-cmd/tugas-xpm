@@ -151,7 +151,7 @@ h1 {
 .btn-submit {
     width: 100%;
     padding: 10px;
-    background-color: #4CAF50;
+    background-color: #7E57C2;
     color: white;
     border: none;
     border-radius: 6px;
@@ -169,7 +169,7 @@ h1 {
 }
 
 .mapel-header {
-    background-color: #4CAF50;
+    background-color: #7E57C2;
     color: white;
     padding: 5px 12px !important;
     border-top-left-radius: 8px;
@@ -275,7 +275,7 @@ h1 {
 }
 
 .btn-modal-ok {
-    background-color: #4CAF50;
+    background-color: #7E57C2;
     color: white;
 }
 
