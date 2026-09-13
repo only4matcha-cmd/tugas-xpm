@@ -38,7 +38,7 @@ const btnCancelPassword = document.getElementById('btnCancelPassword');
 
 let isAdmin = false;
 adminSection.style.display = "none";
-let isFirstLoad = true; // Penanda untuk deteksi tugas baru masuk
+let initialLoadDone = false; // Penanda agar data awal tidak terbaca sebagai tugas baru
 
 // 1. Cek memori Mode Gelap
 if (localStorage.getItem("darkMode") === "enabled") {
@@ -183,8 +183,8 @@ function muatTugasRealtime() {
     onSnapshot(collection(db, "tugasKelas"), (snapshot) => {
         containerMapel.innerHTML = "";
         
-        // Deteksi penambahan tugas baru untuk memunculkan notifikasi (Aman dari pemuatan awal)
-        if (!isFirstLoad && localStorage.getItem("notifStatus") === "enabled") {
+        // Deteksi penambahan tugas baru (Hanya aktif setelah pemuatan awal selesai)
+        if (initialLoadDone && localStorage.getItem("notifStatus") === "enabled") {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added") {
                     let dataBaru = change.doc.data();
@@ -197,7 +197,7 @@ function muatTugasRealtime() {
                 }
             });
         }
-        isFirstLoad = false;
+        initialLoadDone = true;
 
         if (snapshot.empty) {
             containerMapel.innerHTML = "<p style='text-align:center; color:#888;'>Belum ada tugas sama sekali.</p>";
